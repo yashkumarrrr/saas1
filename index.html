@@ -1035,11 +1035,9 @@ async function doSubmit(e){
   };
 
   // ━━━ REPLACE WITH YOUR GOOGLE APPS SCRIPT URL ━━━
-  const SHEET_URL='https://docs.google.com/spreadsheets/d/1WRhzH9DtiDpTt9EmXpymsfpzQvJ61BE_vy-L-AwD4Gk/edit?usp=sharing';
+  const SHEET_URL='https://script.google.com/macros/s/AKfycbzrPX2moWGDMLBJRN_Yo22HLXX0F5mBblcI7eudm2S0MxpHXyooakVC9P-1OqnnPPG6/exec';
   try{
-    if(SHEET_URL!=='https://docs.google.com/spreadsheets/d/1WRhzH9DtiDpTt9EmXpymsfpzQvJ61BE_vy-L-AwD4Gk/edit?usp=sharing'){
-      await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    }
+    await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     console.log('✅ Signup:',payload);
   }catch(err){console.log('⚠️ Signup (offline):',payload)}
 
