@@ -1,0 +1,2289 @@
+import { useState, useMemo } from "react";
+
+const posts = [
+  // ─── DAY 1 ───
+  {day:1,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"5 Docker commands that separate juniors from seniors:",
+  tweet:`5 Docker commands that separate juniors from seniors:
+
+1. docker stats → real-time CPU/RAM per container
+2. docker inspect → full JSON config dump
+3. docker diff → see exactly what changed inside a running container
+4. docker buildx build --platform → multi-arch builds in one command
+5. docker system prune -af → nuke ALL unused data safely
+
+Save this 🔖 Share with your team.
+
+→ Building a unified DevOps dashboard: step2dev.io
+#DevOps #Docker #CloudNative #SRE`,
+  cta:"Follow @Yash_step2dev for 1 DevOps tip every morning 🔔",
+  visual:"Dark terminal card — 5 commands with syntax highlighting + Step2Dev watermark",
+  medium_title:"5 Docker Commands Every Senior DevOps Engineer Uses Daily",
+  medium_hook:"You can tell a lot about a DevOps engineer by the Docker commands they know.",
+  early_user:"P.S. I built Step2Dev to unify Docker, K8s, and CI/CD in one dashboard → step2dev.io"},
+
+  {day:1,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"I set up a full CI/CD pipeline in 58 minutes. Here's every step:",
+  tweet:`🧵 I set up a full CI/CD pipeline in 58 minutes. Here's every step:
+
+1/ Most teams spend DAYS on this. Here's the 58-minute method:
+
+2/ Min 0-10: Write your Dockerfile — containerize the app
+3/ Min 10-25: GitHub Actions YAML — build + test on every push
+4/ Min 25-35: Push Docker image to AWS ECR
+5/ Min 35-50: Deploy to ECS with zero-downtime rolling update
+6/ Min 50-58: Slack alert live + Grafana dashboard confirmed
+
+7/ Full YAML template → step2dev.io/templates
+
+RT to help a dev friend ship faster 🔁
+#CICD #DevOps #GitHub #AWS #Automation`,
+  cta:"🔁 RT this + Follow. I share full pipeline configs every week.",
+  visual:"Timer graphic → 6 steps with time blocks, pipeline flow diagram",
+  medium_title:"CI/CD in 58 Minutes: GitHub Actions + Docker + AWS (Full Walkthrough)",
+  medium_hook:"Most tutorials skip the messy parts. This one doesn't.",
+  early_user:"I'm building Step2Dev so this entire flow lives in one UI. Join the waitlist → step2dev.io"},
+
+  // ─── DAY 2 ───
+  {day:2,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"AWS vs GCP vs Azure — my honest take after shipping on all 3:",
+  tweet:`AWS vs GCP vs Azure — my honest take after shipping on all 3 in production:
+
+🟠 AWS: Best ecosystem. Most jobs. Steepest curve.
+🔵 Azure: Non-negotiable for Microsoft/enterprise shops.
+🟡 GCP: Best Kubernetes + ML. Most underrated cloud. Fight me.
+
+For DevOps startups in 2025:
+→ Start on AWS
+→ Use GCP for ML workloads
+→ Add Azure only when enterprise clients force you
+
+Hot take or agree? 👇
+
+Step2Dev works on all 3 clouds → step2dev.io
+#AWS #GCP #Azure #Cloud #DevOps`,
+  cta:"Like if AWS. Reply if GCP. Ignore if Azure 😂 Follow @Yash_step2dev",
+  visual:"3-column comparison card — logos, real pros/cons, spicy recommendation badge",
+  medium_title:"AWS vs GCP vs Azure in 2025: An Honest Comparison From Someone Who's Shipped on All Three",
+  medium_hook:"Every cloud comparison article is sponsored by one of them. This one isn't.",
+  early_user:"Step2Dev is multi-cloud from day 1. All 3 clouds in one dashboard → step2dev.io"},
+
+  {day:2,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"I'm a DevOps engineer who became a founder. Here's what every CTO needs to know:",
+  tweet:`🧵 I'm a DevOps engineer who became a founder. Here's what every CEO/CTO needs to know about DevOps:
+
+1/ "Move fast and break things" works until your pipeline breaks things FOR you.
+
+2/ 80% of outages I've seen come from 3 root causes:
+→ No rollback strategy
+→ Secrets hardcoded somewhere
+→ "Works on my machine" syndrome
+
+3/ The #1 DevOps investment that pays off fastest is NOT Kubernetes.
+It's a ROLLBACK that works in under 60 seconds.
+
+4/ What your CTO should be asking weekly:
+→ How long to deploy?
+→ How long to detect an incident?
+→ How long to recover?
+
+5/ These 3 metrics (DORA) predict company success better than sprint velocity.
+
+6/ I built Step2Dev to give founders visibility into all of this without a 10-person platform team.
+
+Early access → step2dev.io 🚀
+#CTO #Founder #DevOps #SaaS #Startup`,
+  cta:"Follow if you're a founder who wants to actually understand your own tech stack 👇",
+  visual:"DORA metrics explainer card — 4 metrics in plain business language",
+  medium_title:"What Every CEO/CTO Should Know About DevOps (From an Engineer Who Became a Founder)",
+  medium_hook:"Your pipeline is either a competitive advantage or a liability. There is no middle ground.",
+  early_user:"Step2Dev gives CTOs full-stack DevOps visibility without the platform team → step2dev.io"},
+
+  // ─── DAY 3 ───
+  {day:3,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Terraform is NOT just for AWS. Here are 7 providers most devs ignore:",
+  tweet:`Terraform is NOT just for AWS. Here are 7 providers most devs sleep on:
+
+☁️ Google Cloud → GCP resources
+🔵 Azure → full Microsoft infra
+🐙 GitHub → repos, teams, branch protection
+🔐 Vault → secrets management
+📊 Datadog → monitors and dashboards
+🌐 Cloudflare → DNS, WAF, workers
+🐘 PostgreSQL → database objects
+
+One tool. Everything as code. One state file.
+
+This is what "infrastructure as code" actually means.
+
+→ step2dev.io/terraform-templates
+#Terraform #IaC #DevOps #CloudNative`,
+  cta:"Like + Follow for IaC deep dives every week 🔥",
+  visual:"Terraform logo in center → 7 provider logos branching out, spider diagram",
+  medium_title:"Terraform Is Not Just for AWS: 7 Providers That Will Change How You Work",
+  medium_hook:"If you think Terraform is just a cloud provisioning tool, you're only using 30% of it.",
+  early_user:"Step2Dev uses Terraform under the hood. Manage your whole stack from one place → step2dev.io"},
+
+  {day:3,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"What ACTUALLY happens when you run 'kubectl apply' (most devs never look inside):",
+  tweet:`🧵 What ACTUALLY happens when you run "kubectl apply -f deploy.yaml" — most devs have no idea:
+
+1/ You press enter. 8 things happen in under 2 seconds.
+
+2/ kubectl validates YAML locally against the OpenAPI schema. Wrong config? Rejected immediately.
+
+3/ kubectl sends HTTP PATCH to the kube-apiserver.
+
+4/ API Server authenticates your request via kubeconfig/service account, then runs admission controllers.
+
+5/ Validated resource is written to etcd — the cluster's source of truth. This is permanent storage.
+
+6/ Controller Manager detects desired state (your YAML) vs actual state (current pods). Gap found.
+
+7/ Scheduler assigns new pods to nodes based on resource requests, taints, and affinity rules.
+
+8/ kubelet on the target node pulls the image, creates containers, mounts volumes, sets up network.
+
+9/ kube-proxy updates iptables rules so your service routes traffic correctly.
+
+10/ All of this happens in parallel, not sequentially. Under 2 seconds for most clusters.
+
+Now you know what's inside the black box.
+
+Diagram → step2dev.io/kubectl-apply
+RT to every K8s user who's been pressing apply and hoping for the best 😄
+#Kubernetes #DevOps #CloudNative`,
+  cta:"RT this to every K8s user who's been faking it for months 😄",
+  visual:"K8s architecture diagram — annotated apply flow with numbered arrows and component labels",
+  medium_title:"What Really Happens When You Run kubectl apply (A Deep Dive for Developers)",
+  medium_hook:"You've been running kubectl apply for months. Let me show you what's actually happening under the hood.",
+  early_user:"Step2Dev shows K8s events and pod status in real-time. No more guessing → step2dev.io"},
+
+  // ─── DAY 4 ───
+  {day:4,slot:"AM",type:"Tip",audience:"Developer",
+  hook:"Hot take: Most teams don't need Kubernetes. Here's what they actually need:",
+  tweet:`Hot take: Most teams don't need Kubernetes.
+
+For teams under 15 engineers, try these instead:
+
+🚂 Railway → deploy in 2 minutes, zero config
+🌊 Render → Heroku but better and cheaper
+✈️ Fly.io → containers anywhere, incredible DX
+🐳 Docker Compose → multi-service, zero overhead
+🏃 AWS App Runner → managed containers, auto-scale
+
+Kubernetes is powerful. But so is a hammer. Not everything is a nail.
+
+Save your team 6 months of K8s headaches.
+
+→ step2dev.io works with all of these
+#DevOps #Kubernetes #Startup #Developer`,
+  cta:"RT if you've been burned by premature K8s 😂 Follow for honest DevOps takes",
+  visual:"Team size vs infra complexity chart — K8s lands way to the right with a warning label",
+  medium_title:"You Probably Don't Need Kubernetes (And What to Use Instead)",
+  medium_hook:"I've seen 3-person startups running full K8s clusters. I've also seen their AWS bills.",
+  early_user:"Step2Dev works whether you're on Kubernetes or Railway. We meet you where you are → step2dev.io"},
+
+  {day:4,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"8 DevOps mistakes I've seen kill pipelines in production (and how to fix each one):",
+  tweet:`🧵 I've reviewed 50+ DevOps setups this year. Here are the 8 mistakes killing every pipeline:
+
+1/ Hardcoded secrets in YAML files → use Vault or GitHub Secrets. Always.
+
+2/ No rollback strategy → every deploy is a gamble. Add 'kubectl rollout undo' to your runbook NOW.
+
+3/ Manual approvals as a bottleneck → automate everything below P1 risk.
+
+4/ Testing only in production → staging environments are not optional.
+
+5/ No observability → flying blind. Install Prometheus + Grafana this week. It's free.
+
+6/ Kubernetes for a 3-person team → overkill. Use Docker Compose or Railway.
+
+7/ Ignoring Docker layer caching → rebuilding FROM SCRATCH on every push. Fix your Dockerfile order.
+
+8/ One giant monolithic pipeline → split into build / test / deploy stages. Run them in parallel.
+
+Which one is YOUR team guilty of? Reply honestly 👇
+
+Checklist → step2dev.io/pipeline-audit
+#DevOps #CICD #SRE #CloudNative #Automation`,
+  cta:"RT this to save a DevOps team's Friday night 🙏",
+  visual:"8 red warning cards — each with mistake title and a one-line fix",
+  medium_title:"8 DevOps Mistakes That Are Silently Destroying Your Pipeline",
+  medium_hook:"I've seen the same 8 mistakes destroy pipelines at companies of every size. Here's how to fix all of them.",
+  early_user:"Step2Dev's pipeline audit feature catches 6 of these 8 automatically → step2dev.io"},
+
+  // ─── DAY 5 ───
+  {day:5,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Prometheus alerting rules that have saved my team from 3am incidents:",
+  tweet:`Prometheus alerting rules that have saved my team from 3am incidents 🚨
+
+Add these 5 to every Kubernetes cluster:
+
+1. High CPU:
+rate(container_cpu_usage_seconds_total[5m]) > 0.9
+
+2. Memory pressure:
+container_memory_working_set_bytes > 0.8 * limit
+
+3. Pod crash loop:
+kube_pod_container_status_restarts_total > 5
+
+4. Disk almost full:
+node_filesystem_avail_bytes / node_filesystem_size_bytes < 0.1
+
+5. Service down:
+up == 0
+
+Copy these into your Prometheus rules file today 🔖
+
+→ step2dev.io/prometheus-templates
+#Prometheus #Observability #DevOps #SRE #Kubernetes`,
+  cta:"Save this post 🔖 — you will need it at 3am someday. Follow @Yash_step2dev",
+  visual:"Dark code card — all 5 PromQL rules with syntax highlighting",
+  medium_title:"5 Prometheus Alerting Rules That Will Save You From 3am Incidents",
+  medium_hook:"Every Kubernetes cluster I've ever touched was missing at least 3 of these rules.",
+  early_user:"Step2Dev integrates with Prometheus out of the box. Your alerts, your dashboard → step2dev.io"},
+
+  {day:5,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"Build in Public — Week 1 of Step2Dev: what I shipped, what broke, real numbers:",
+  tweet:`🧵 Build in Public: Week 1 of Step2Dev — what I shipped, what broke, and real numbers
+
+1/ I'm building Step2Dev in public. A unified DevOps platform for dev teams. Here's week 1.
+
+2/ SHIPPED:
+→ Auth system (email + GitHub OAuth)
+→ Pipeline status dashboard MVP
+→ GitHub + GitLab integrations (basic read)
+
+3/ BROKE:
+→ DB migrations failed on first production deploy at 11pm
+→ Webhook receiver timing out under any real load
+→ My sleep schedule (not fixed yet)
+
+4/ NUMBERS:
+→ Lines of code written: ~3,400
+→ GitHub stars: [tracking live]
+→ Waitlist signups: [tracking live]
+→ Coffees consumed: 14
+
+5/ BIGGEST LESSON:
+"Ship ugly. Users don't care about perfect. They care about problems solved."
+
+6/ Week 2 preview:
+→ Slack + PagerDuty integration
+→ Public changelog page
+→ First 10 beta users onboarded
+
+Follow the journey → step2dev.io 🚀
+#BuildInPublic #SaaS #DevOps #Founder #IndieHacker`,
+  cta:"Follow @Yash_step2dev to watch this build from 0 to product-market fit 👀",
+  visual:"Week 1 scorecard — goals vs achieved with green/red dots, metrics dashboard style",
+  medium_title:"Building Step2Dev Week 1: What I Shipped, What Broke, and What I Learned",
+  medium_hook:"I promised myself I'd share everything — the wins AND the 11pm production disasters.",
+  early_user:"We're onboarding first 10 beta users this week. Want in? → step2dev.io/beta"},
+
+  // ─── DAY 6 ───
+  {day:6,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"Replace your $500/month monitoring stack with this free setup:",
+  tweet:`Replace your $500/month monitoring stack with this free setup:
+
+PAID → FREE ALTERNATIVE:
+Datadog ($400/mo) → Grafana (free)
+Splunk ($300/mo) → Loki (free)
+New Relic ($200/mo) → Prometheus (free)
+PagerDuty ($150/mo) → Alertmanager (free)
+Honeycomb ($200/mo) → Tempo (free)
+
+The Grafana OSS stack = enterprise-grade monitoring for $0.
+
+Docker Compose to spin all of this up in 5 minutes →
+step2dev.io/grafana-stack
+
+#DevOps #Grafana #Prometheus #Monitoring #OpenSource`,
+  cta:"Save 🔖 + Follow for more zero-cost DevOps stacks. Your CFO will love you.",
+  visual:"Comparison table — paid tool + price vs free alternative + annual savings highlighted",
+  medium_title:"Replace Your Entire Monitoring Stack With Free Tools (Grafana + Prometheus + Loki Guide)",
+  medium_hook:"I've saved teams over $80,000 per year in monitoring costs. Here is the exact stack.",
+  early_user:"Step2Dev integrates with the full Grafana stack out of the box → step2dev.io"},
+
+  {day:6,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"The DevOps resources that actually changed my career (all free, zero fluff):",
+  tweet:`🧵 The DevOps resources that actually changed my career — all free, zero fluff:
+
+1/ Let me save you 2 years of finding these yourself.
+
+2/ The Phoenix Project → read this first. Understand WHY DevOps exists before learning HOW.
+
+3/ Google SRE Book → sre.google — completely free. The bible of production reliability.
+
+4/ roadmap.sh/devops → the best free learning path. Updated constantly by the community.
+
+5/ KillerKoda → free Kubernetes + Linux hands-on labs that run in your browser. No setup.
+
+6/ TechWorld with Nana → best YouTube channel for DevOps. No padding, no fluff.
+
+7/ learn.hashicorp.com → free Terraform, Vault, Nomad tutorials direct from HashiCorp.
+
+8/ CNCF landscape at cncf.io → know your ecosystem. Every tool, every category.
+
+9/ r/devops → real engineers solving real problems. Search before you post.
+
+10/ Step2Dev blog → step2dev.io/blog — practical configs, no theory. (Shameless plug but it's good 😄)
+
+Save this thread. Come back monthly.
+#DevOps #Learning #Career #SRE #CloudNative`,
+  cta:"🔁 RT this to every junior DevOps engineer you know. This is the actual roadmap.",
+  visual:"Bookshelf illustration — 10 resources as book spines with category color coding",
+  medium_title:"The Only DevOps Learning Roadmap You Actually Need in 2025 (10 Free Resources, Ranked)",
+  medium_hook:"Most roadmaps are either outdated or trying to sell you a $500 course. This one isn't.",
+  early_user:"The Step2Dev blog covers practical DevOps with real configs. No theory → step2dev.io/blog"},
+
+  // ─── DAY 7 ───
+  {day:7,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Stop using long-lived AWS access keys. Here's the modern zero-key approach:",
+  tweet:`Stop using long-lived AWS access keys. Here's the 2025 zero-key approach:
+
+❌ THE OLD WAY (dangerous):
+→ aws_access_key_id in CI/CD env vars
+→ ~/.aws/credentials on shared servers
+→ Keys that rotate... never
+
+✅ THE MODERN WAY (zero static keys):
+→ GitHub Actions + OIDC → assumes IAM role directly, no key needed
+→ EC2 Instance Profiles → temporary creds via metadata endpoint
+→ AWS SSO → humans get short-lived sessions only
+→ IAM Roles Anywhere → for on-prem workloads
+
+Zero static keys = zero rotation = zero leaks.
+
+Full setup guide → step2dev.io/oidc-aws
+#AWS #Security #DevSecOps #IAM #DevOps`,
+  cta:"Follow @Yash_step2dev — one AWS security tip every week 🛡️",
+  visual:"Two columns — Old Way (red Xs) vs Modern Way (green checkmarks) with tool icons",
+  medium_title:"Why You Should Never Use Long-Lived AWS Access Keys (And What to Do Instead)",
+  medium_hook:"The most common way I've seen AWS accounts get compromised is not a sophisticated hack. It's a leaked key.",
+  early_user:"Step2Dev uses OIDC federation with AWS, GCP, and Azure. No static keys ever → step2dev.io"},
+
+  {day:7,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"Week recap: 5 things I learned, shipped, and discovered this week in DevOps:",
+  tweet:`🧵 Week recap: 5 DevOps things I learned, shipped, and discovered this week
+
+1/ LEARNED: Kubernetes Vertical Pod Autoscaler (VPA) automatically right-sizes pod resource requests. Most teams don't use it. Start this week.
+
+2/ SHIPPED: Step2Dev pipeline dashboard v0.2 — now shows deployment frequency + MTTR side by side.
+
+3/ DISCOVERED: Dagger.io — write your CI/CD pipelines in actual code (Go, Python, TypeScript). The DX is insane.
+
+4/ HOT TAKE: "Platform Engineering" is just DevOps with better marketing and a bigger budget. The problems are identical.
+
+5/ REMINDER: The best automation script is the one you can actually maintain in 6 months.
+
+What did YOU learn this week? Reply 👇 I retweet the 3 best answers every Sunday.
+
+#DevOps #WeeklyWrap #BuildInPublic #SRE #Step2Dev`,
+  cta:"Reply with your weekly DevOps win 👇 Top 3 get retweeted every Sunday",
+  visual:"Weekly scorecard card — 5 items with emoji icons, clean dark layout",
+  medium_title:"5 DevOps Lessons From This Week: VPA, Dagger.io, and Platform Engineering Reality",
+  medium_hook:"I write these weekly recaps so you don't have to spend 5 hours on Twitter finding this yourself.",
+  early_user:"MTTR and deployment frequency are now tracked live in Step2Dev → step2dev.io"},
+
+  // ─── DAY 8 ───
+  {day:8,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"The 10 most useful Linux commands for DevOps engineers (save this thread):",
+  tweet:`The 10 most useful Linux commands for DevOps engineers — save this:
+
+1. netstat -tulnp → all open ports with processes
+2. lsof -i :8080 → what is using that port right now
+3. df -h → human-readable disk usage
+4. htop → interactive process monitor
+5. journalctl -u nginx --since "1 hour ago" → recent service logs
+6. ss -s → socket statistics summary
+7. strace -p PID → trace system calls of a running process
+8. tcpdump -i eth0 port 443 → live HTTPS traffic
+9. awk '{print $1}' | sort | uniq -c | sort -rn → log frequency analysis
+10. watch -n 2 'kubectl get pods' → real-time repeat any command
+
+Print this. Tape it to your monitor.
+
+→ step2dev.io
+#Linux #DevOps #SysAdmin #CloudNative #SRE`,
+  cta:"Save 🔖 and Follow for more Linux/DevOps productivity tips daily",
+  visual:"Dark terminal card — all 10 commands with syntax highlights + description inline",
+  medium_title:"The 10 Linux Commands Every DevOps Engineer Should Know by Memory",
+  medium_hook:"I've interviewed 100+ DevOps engineers. The ones who know these 10 commands always stand out.",
+  early_user:"Step2Dev gives you terminal-level visibility from a single browser tab → step2dev.io"},
+
+  {day:8,slot:"PM",type:"Thread",audience:"Cloud Engineer",
+  hook:"I cut a startup's AWS bill from $12,000 to $4,800/month. Here's exactly what I did:",
+  tweet:`🧵 I cut a startup's AWS bill from $12,000 to $4,800/month. Same traffic. Here's every move:
+
+1/ They were burning $144k/year on AWS. Here's the 6-move playbook:
+
+2/ MOVE 1: EC2 right-sizing with Compute Optimizer
+→ 40% of instances were massively over-provisioned
+→ Saved: $1,800/month
+
+3/ MOVE 2: Spot instances for dev and staging environments
+→ Non-critical workloads on 100% Spot
+→ Saved: $2,100/month
+
+4/ MOVE 3: S3 Intelligent-Tiering
+→ 2TB of data untouched for 6+ months
+→ Saved: $400/month
+
+5/ MOVE 4: Reserved Instances for baseline prod load
+→ 1-year commitment on predictable workloads
+→ Saved: $800/month
+
+6/ MOVE 5: Killed 47 zombie EBS volumes nobody knew existed
+→ Saved: $600/month
+
+7/ MOVE 6: CloudFront caching → less Lambda invocations
+→ Cache hit rate from 12% to 78%
+→ Saved: $500/month
+
+8/ TOTAL: $7,200/month saved = $86,400 back to the company per year 💰
+
+Cost audit template → step2dev.io/cost-audit
+#AWS #FinOps #CloudCost #DevOps #Cloud`,
+  cta:"🔁 RT this. Someone you know is paying too much for AWS right now.",
+  visual:"Before/after cost breakdown bar chart — each saving labeled with dollar amount",
+  medium_title:"How I Cut an AWS Bill by 60%: A Real Step-by-Step Cost Audit",
+  medium_hook:"The startup was 3 months from running out of runway. Their AWS bill was the silent killer.",
+  early_user:"Step2Dev shows cloud costs alongside your pipelines. See the full picture → step2dev.io"},
+
+  // ─── DAY 9 ───
+  {day:9,slot:"AM",type:"Tip",audience:"Developer",
+  hook:"GitOps vs DevOps — what's the actual difference? (most people get this wrong):",
+  tweet:`GitOps vs DevOps — what's the actual difference? Most people get this wrong.
+
+DevOps = culture + practices (CI/CD, automation, collaboration, monitoring)
+
+GitOps = a SUBSET of DevOps where:
+→ Git is the single source of truth for everything
+→ All infra changes happen through pull requests
+→ ArgoCD or Flux auto-syncs desired state to your cluster
+→ No manual kubectl apply. Ever.
+
+GitOps does NOT replace DevOps. It implements one part of it really well.
+
+Are you using GitOps yet? What's stopping you? 👇
+
+→ step2dev.io
+#GitOps #DevOps #ArgoCD #Kubernetes #CloudNative`,
+  cta:"Follow @Yash_step2dev — I explain one DevOps concept clearly every single day 🧠",
+  visual:"Venn diagram — DevOps large circle, GitOps smaller circle inside it with tool logos",
+  medium_title:"GitOps vs DevOps: What's the Real Difference and When Should You Use Each",
+  medium_hook:"I see senior engineers confuse these two terms daily. Let me settle it once and for all.",
+  early_user:"Step2Dev supports full GitOps workflows out of the box → step2dev.io"},
+
+  {day:9,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"Secrets management in DevOps is completely broken. Here's how to fix it properly:",
+  tweet:`🧵 Secrets management in DevOps is broken at most companies. Here's how to fix it properly:
+
+1/ The worst things I've found in real production repos this year:
+
+2/ API keys committed directly in .env files
+Passwords hardcoded in docker-compose.yml
+JWT secrets in Helm chart values
+SSH private keys in GitHub Actions env vars
+
+If you recognize any of these, stop reading and fix it right now.
+
+3/ THE RIGHT APPROACH — 4 options ranked by maturity:
+
+4/ Level 1 (basic): GitHub Secrets + OIDC
+→ Good for small teams, free, easy setup
+
+5/ Level 2 (intermediate): AWS Secrets Manager or GCP Secret Manager
+→ Cloud-native, auto-rotation built in
+
+6/ Level 3 (advanced): HashiCorp Vault
+→ Dynamic secrets, fine-grained policies, audit log
+
+7/ Level 4 (Kubernetes-native): Sealed Secrets or External Secrets Operator
+→ Encrypt secrets at rest, sync from Vault/AWS
+
+8/ The rule: Secrets never touch your codebase. Not ever. Not for "just a test".
+
+Setup guide → step2dev.io/secrets
+#DevSecOps #Security #DevOps #Vault #Kubernetes`,
+  cta:"Follow @Yash_step2dev — DevSecOps tip every week. Your future self thanks you 🛡️",
+  visual:"4-level pyramid — each secrets management tier with tools and use case",
+  medium_title:"Secrets Management in DevOps: The Complete Guide From Basic to Advanced",
+  medium_hook:"I found an AWS root access key committed to a public GitHub repo last month. It was 3 years old.",
+  early_user:"Step2Dev integrates with Vault, AWS Secrets Manager, and GitHub Secrets → step2dev.io"},
+
+  // ─── DAY 10 ───
+  {day:10,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"The 3-2-1 backup rule for DevOps engineers — don't learn this the hard way:",
+  tweet:`The 3-2-1 backup rule for DevOps engineers — don't learn this the hard way 💾
+
+THE RULE:
+→ 3 copies of your data
+→ 2 different storage types
+→ 1 offsite or cloud copy
+
+FOR KUBERNETES:
+→ Velero for full cluster backup
+→ etcd snapshots every 60 minutes
+→ S3 cross-region replication for state
+
+FOR DATABASES:
+→ RDS automated daily backups
+→ Read replica in a different AZ
+→ Weekly snapshot to Glacier for archival
+
+CRITICAL STEP EVERYONE SKIPS:
+→ Test your restores. Every single month.
+→ An untested backup is not a backup. It's hope.
+
+→ step2dev.io
+#DevOps #Backup #SRE #AWS #Kubernetes`,
+  cta:"Save this 🔖 — you only think about backups after you desperately need them.",
+  visual:"3-2-1 rule visual — 3 layers with icons for local, secondary, offsite",
+  medium_title:"The 3-2-1 Backup Rule for DevOps Engineers: A Complete Implementation Guide",
+  medium_hook:"I've watched two companies lose all their production data. Both had 'backups'. Neither tested them.",
+  early_user:"Step2Dev monitors your backup jobs alongside your pipelines → step2dev.io"},
+
+  {day:10,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"Your startup's biggest technical debt isn't in your code. It's in your deployment process:",
+  tweet:`🧵 Your startup's biggest technical debt isn't in your code. It's in your deployment process.
+
+1/ I've audited 30+ startup tech stacks this year. The #1 hidden risk is never code quality.
+
+2/ It's always one of these:
+→ Only 1 person knows how to deploy to production
+→ No rollback procedure exists anywhere
+→ Staging environment is skipped to "save time"
+→ Secrets last rotated... nobody remembers
+
+3/ The business cost you're not measuring:
+→ Every outage = direct revenue loss
+→ Every slow deploy = team morale drain
+→ Every manual step = impossible to scale
+
+4/ The 3 fixes CTOs should implement this month (in order):
+
+5/ Fix 1: Automated rollback in under 60 seconds
+→ kubectl rollout undo + tested in staging first
+
+6/ Fix 2: Nobody deploys manually. The pipeline deploys.
+→ Remove all SSH access to production
+
+7/ Fix 3: A runbook exists and someone other than you can execute it
+→ Write it. Share it. Test it quarterly.
+
+8/ These 3 fixes will make your company more fundable, your team more confident, and your weekends yours again.
+
+9/ This is exactly what Step2Dev helps startups implement fast. Not a 6-month transformation. Just the things that matter.
+
+Early access → step2dev.io
+#CTO #Startup #DevOps #TechDebt #Founder`,
+  cta:"Follow @Yash_step2dev if you're a founder who wants DevOps without the complexity 🎯",
+  visual:"Risk matrix — deployment risks on Y axis, business impact on X, heatmap style",
+  medium_title:"The Hidden Technical Debt Silently Killing Your Startup (It's Not What You Think)",
+  medium_hook:"Every CTO worries about code quality. Almost none worry about the thing that matters more.",
+  early_user:"Step2Dev is built for startup CTOs who need platform engineering without the platform team → step2dev.io"},
+
+  // ─── DAY 11 ───
+  {day:11,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"ArgoCD + GitHub Actions = the perfect GitOps setup. Here's the full config:",
+  tweet:`ArgoCD + GitHub Actions = the perfect GitOps setup. Here's the full config breakdown:
+
+ROLE SPLIT:
+→ GitHub Actions handles CI (build, test, scan, push image)
+→ ArgoCD handles CD (detects new image, deploys to K8s)
+
+THE FLOW:
+1. Dev pushes code → GH Actions triggers
+2. Build + test + Trivy security scan
+3. Push new image to registry with commit SHA tag
+4. Kustomize overlay updated with new image tag
+5. ArgoCD detects Git change → syncs cluster
+6. Health check confirms rollout → Slack notification ✅
+
+WHY THIS WORKS:
+→ No kubectl in your CI pipeline (security win)
+→ Git is the only deployment trigger (audit trail)
+→ Rollback = git revert (instant)
+
+Full config → step2dev.io/gitops-setup
+#GitOps #ArgoCD #GitHub #Kubernetes #DevOps`,
+  cta:"Follow @Yash_step2dev for full GitOps configs every week 🚀",
+  visual:"GitOps flow diagram — git push all the way to cluster sync with tool logos",
+  medium_title:"The Perfect GitOps Setup: ArgoCD + GitHub Actions (Full Configuration Guide)",
+  medium_hook:"After trying 4 different GitOps setups, this is the one I keep coming back to.",
+  early_user:"All of this is visible in Step2Dev's deployment dashboard → step2dev.io"},
+
+  {day:11,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"I automated my entire dev workflow in one weekend. Here's the complete setup:",
+  tweet:`🧵 I automated my entire dev workflow in one weekend. Here's the complete setup — copy this:
+
+1/ Friday I was doing 11 manual steps for every deploy. By Monday I was doing 1. Here's everything:
+
+2/ Git push to main → triggers GitHub Actions automatically. Nothing manual here.
+
+3/ GitHub Actions runs in parallel:
+→ Build Docker image
+→ Run unit tests
+→ Run integration tests
+→ Trivy security scan on the image
+
+4/ All pass → image pushed to AWS ECR with commit SHA tag.
+
+5/ Terraform + Atlantis:
+→ Detects any .tf file changes in the PR
+→ Runs plan and posts output directly to the PR
+→ Applies automatically on merge to main
+
+6/ ArgoCD watches ECR:
+→ Detects new image tag
+→ Updates Kustomize overlay automatically
+→ Syncs cluster to new desired state
+→ Runs health checks on new pods
+
+7/ Alertmanager → Slack:
+→ "✅ Deployed main@a3f92b to production — all pods healthy"
+→ Grafana dashboard auto-refreshes with new deploy marker
+
+8/ Total setup time: 6 hours on a Saturday.
+Ongoing maintenance: near zero.
+
+Full config files (YAML + ArgoCD app definitions) →
+step2dev.io/weekend-automation
+
+🔁 RT to save someone's Monday morning deploy
+#Automation #DevOps #GitOps #GitHub #ArgoCD`,
+  cta:"🔁 RT to help a developer automate their workflow this weekend",
+  visual:"Full automation flow diagram — git push → all steps → Slack ✅ in one visual",
+  medium_title:"I Automated My Entire Dev Workflow in One Weekend: The Complete Guide With Configs",
+  medium_hook:"I was doing 11 manual steps for every deploy. Now it's exactly 1 step: git push.",
+  early_user:"This entire flow is visible in Step2Dev's unified dashboard → step2dev.io"},
+
+  // ─── DAY 12 ───
+  {day:12,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Platform Engineering is replacing DevOps teams. Here's what that means for your career:",
+  tweet:`Platform Engineering is replacing DevOps teams. Here's what that means for your career:
+
+OLD MODEL:
+→ Every team builds their own pipelines
+→ DevOps engineer = everyone's personal ops person
+→ Burnout. Context switching. No standards.
+
+NEW MODEL (Platform Engineering):
+→ One team builds an Internal Developer Platform (IDP)
+→ All other teams self-serve via the platform
+→ DevOps engineer = product manager for developer experience
+
+TOOLS LEADING THIS SHIFT:
+🎡 Backstage (Spotify) → developer portal
+🌊 Crossplane → infra as Kubernetes resources
+📦 Port → lightweight IDP builder
+🚀 Humanitec → platform orchestrator
+
+Start learning Platform Engineering NOW.
+The job market is shifting fast.
+
+→ step2dev.io
+#PlatformEngineering #DevOps #Career #Backstage`,
+  cta:"Follow for daily career-focused DevOps content 📈 This stuff matters for your salary",
+  visual:"Old DevOps silo model vs Platform Engineering hub model — side by side diagram",
+  medium_title:"Platform Engineering Is Replacing DevOps: What It Means for Your Career in 2025",
+  medium_hook:"DevOps engineers who don't adapt to Platform Engineering will find themselves irrelevant by 2027.",
+  early_user:"Step2Dev is built on platform engineering principles → step2dev.io"},
+
+  {day:12,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"4 metrics that predict whether your dev team will ship or sink (DORA metrics explained simply):",
+  tweet:`🧵 4 metrics that predict whether your dev team will ship or sink — DORA metrics explained for founders:
+
+1/ Most CTOs track story points and sprint velocity. These metrics are nearly useless for predicting business outcomes.
+
+2/ DORA metrics predict company performance with actual data. Here's all 4:
+
+3/ METRIC 1: Deployment Frequency
+→ How often do you push to production?
+→ Elite teams: multiple times per day
+→ Struggling teams: once a month or less
+
+4/ METRIC 2: Lead Time for Changes
+→ From commit to running in production. How long?
+→ Elite: under 1 hour
+→ Struggling: 1 to 6 months
+
+5/ METRIC 3: Change Failure Rate
+→ What percentage of deploys cause an incident?
+→ Elite: under 5%
+→ Struggling: 46% to 60%
+
+6/ METRIC 4: Time to Restore Service
+→ When something breaks, how fast do you recover?
+→ Elite: under 1 hour
+→ Struggling: 1 week or more
+
+7/ Be brutally honest. Where does your team sit on each of these?
+
+8/ The companies I've worked with that tracked DORA metrics were 2x more likely to hit their engineering OKRs.
+
+Track all 4 automatically in Step2Dev → step2dev.io
+#Engineering #CTO #DevOps #DORA #Startup`,
+  cta:"Reply with your deployment frequency. I'll tell you exactly where you rank vs industry 📊",
+  visual:"DORA metrics table — Elite / High / Medium / Low bands with color coding per row",
+  medium_title:"DORA Metrics Explained for Non-Technical Founders and CTOs (With Real Benchmarks)",
+  medium_hook:"Your sprint velocity tells you almost nothing. These 4 metrics tell you everything.",
+  early_user:"Step2Dev tracks your DORA metrics automatically. Know where you stand → step2dev.io"},
+
+  // ─── DAY 13 ───
+  {day:13,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"Kubernetes is slow? Here are the 5 things to check first:",
+  tweet:`Kubernetes cluster feeling slow? Check these 5 things before doing anything else:
+
+1. No resource requests/limits set
+→ Pods are starving each other for CPU/RAM
+→ Fix: Add requests and limits to every deployment
+
+2. ImagePullPolicy: Always on every pod
+→ K8s pulls the image on EVERY restart, even if it's cached
+→ Fix: Use IfNotPresent for stable tags
+
+3. Too many watch connections to API Server
+→ Your controllers are hammering the API
+→ Fix: Check with kubectl get --watch and audit your operators
+
+4. etcd on a spinning disk
+→ etcd is I/O sensitive. Disk latency = cluster latency
+→ Fix: SSDs only for etcd
+
+5. No Horizontal Pod Autoscaler configured
+→ You're scaling manually under load
+→ Fix: Set up HPA with CPU + custom metrics
+
+Fixing #1 alone will 3x most clusters' performance.
+
+→ step2dev.io
+#Kubernetes #Performance #DevOps #K8s #CloudNative`,
+  cta:"Save this 🔖 — cluster slowness is always urgent. Follow for more K8s deep dives.",
+  visual:"5-item diagnostic checklist card with problem, symptom, and one-line fix for each",
+  medium_title:"Why Is My Kubernetes Cluster Slow? The 5 Most Common Causes and Fixes",
+  medium_hook:"Nine out of ten slow Kubernetes clusters I've diagnosed had the exact same root causes.",
+  early_user:"Step2Dev shows K8s resource usage and HPA status in real-time → step2dev.io"},
+
+  {day:13,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"Our full incident response runbook at Step2Dev — steal this for your team:",
+  tweet:`🧵 Our full incident response runbook at Step2Dev — steal this for your team:
+
+1/ Incident response without a runbook is just expensive chaos. Here's exactly how we handle it:
+
+2/ ALERT FIRES:
+→ Alertmanager sends to Slack #incidents channel
+→ Bot auto-creates a dedicated incident channel
+→ On-call engineer has 5 minutes to acknowledge
+
+3/ SEVERITY CLASSIFICATION:
+→ P1: Production down, revenue impacted, all hands
+→ P2: Major feature broken, affects 30%+ of users
+→ P3: Degraded performance, workaround exists
+
+4/ P1 PROTOCOL:
+→ Incident commander assigned immediately
+→ CEO + CTO notified
+→ Customer-facing status page updated
+→ Every update documented in the channel (timestamped)
+
+5/ GOLDEN RULE: Mitigation first. Root cause analysis after.
+→ Fix the symptom, then investigate the disease
+
+6/ POSTMORTEM:
+→ Blameless. Always blameless.
+→ Published within 48 hours
+→ Shared publicly when possible (builds trust)
+
+7/ METRICS WE TRACK:
+→ Time to detect
+→ Time to acknowledge
+→ Time to mitigate
+→ Number of customers affected
+
+8/ Full runbook template (copy/paste ready) →
+step2dev.io/runbook
+
+#SRE #IncidentResponse #DevOps #Observability #Step2Dev`,
+  cta:"RT + save this runbook. Use it in your next incident. It will save you hours. 📋",
+  visual:"Incident response flow chart — Alert → Triage → Mitigate → Postmortem with color coded severity",
+  medium_title:"Our Complete Incident Response Runbook at Step2Dev (Steal This Template)",
+  medium_hook:"Every incident I've responded to without a runbook took 3x longer than it should have.",
+  early_user:"Step2Dev tracks incident metrics alongside your deployment data → step2dev.io"},
+
+  // ─── DAY 14 ───
+  {day:14,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Docker in production — 7 best practices most tutorials never mention:",
+  tweet:`Docker in production — 7 best practices most tutorials never teach you:
+
+1. Multi-stage builds → smaller final images (often 10x smaller)
+2. Run as non-root user → security hardening, required by most K8s policies
+3. Use .dockerignore → never leak source code, credentials, or node_modules
+4. Pin base image versions → FROM node:20.11.1 not FROM node:latest
+5. Set resource limits in compose/K8s → prevent container memory hogs
+6. Read-only filesystems where possible → attack surface reduction
+7. Scan with Trivy before every push → catch CVEs before production
+
+Doing all 7? You are in the top 10% of Docker users.
+
+→ step2dev.io
+#Docker #DevOps #Security #CloudNative #Containers`,
+  cta:"Save 🔖 and Follow for production-grade DevOps best practices daily",
+  visual:"7 best practice cards in a grid — each with an icon and one-sentence explanation",
+  medium_title:"7 Docker Production Best Practices That Most Tutorials Skip",
+  medium_hook:"I've reviewed hundreds of Dockerfiles. Almost none follow all 7 of these practices.",
+  early_user:"Step2Dev runs Trivy scans automatically on every pipeline push → step2dev.io"},
+
+  {day:14,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"Zero to deployed — a complete DevOps pipeline using only free tools in 2025:",
+  tweet:`🧵 Zero to deployed — a complete production DevOps pipeline using 100% free tools:
+
+1/ You can run a real production pipeline for $0. Here is every tool and why:
+
+2/ Code repository → GitHub (free for public + private)
+Unlimited repos, Actions minutes for public projects.
+
+3/ CI/CD → GitHub Actions (free tier)
+2,000 minutes/month for private repos. Enough for most small teams.
+
+4/ Container Registry → GitHub Container Registry — GHCR (free)
+No separate registry account needed. Integrated with Actions.
+
+5/ Deployment target → Fly.io free tier
+3 small VMs, auto-scaling, global edge deployment. Genuinely free.
+
+6/ Monitoring → Grafana Cloud free tier
+10k metrics, 50GB logs, 14-day retention. Full Grafana stack.
+
+7/ Secrets management → GitHub Secrets (free)
+Encrypted env vars, OIDC support, per-repo and org-level.
+
+8/ DNS + CDN + WAF → Cloudflare (free tier)
+Global CDN, DDoS protection, automatic HTTPS. No cost.
+
+9/ Total monthly cost: $0
+Total setup time: About 3 hours
+
+Full step-by-step tutorial →
+step2dev.io/free-pipeline
+
+🔁 RT this — every bootstrapped founder needs this stack
+#DevOps #FreeTech #GitHub #Startup #IndieHacker`,
+  cta:"RT this — every broke startup founder or solo dev needs this thread 💸",
+  visual:"Flow diagram using all free tool logos connected end to end with $0 total labeled",
+  medium_title:"A Complete Production DevOps Pipeline Using 100% Free Tools in 2025",
+  medium_hook:"I built and shipped a production app this year spending exactly $0 on infrastructure tooling.",
+  early_user:"Step2Dev works alongside this free stack. Add it when you're ready to scale → step2dev.io"},
+
+  // ─── DAY 15 ───
+  {day:15,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Self-healing infrastructure sounds fancy. Here's what it actually means in practice:",
+  tweet:`Self-healing infrastructure sounds fancy. Here's what it actually means in practice:
+
+AUTOMATIC RECOVERY — no human required:
+
+1. K8s liveness probes → pod fails health check → K8s kills and restarts it. Automatic.
+
+2. K8s readiness probes → pod not ready → removed from load balancer until healthy. Automatic.
+
+3. ArgoCD drift detection → someone manually changed a resource → ArgoCD reverts it to Git state. Automatic.
+
+4. AWS Auto Scaling → CPU spikes above threshold → new EC2 instance added in 3 minutes. Automatic.
+
+5. cert-manager → TLS certificate expiring → renewed 30 days before expiry. Automatic.
+
+6. Alertmanager + custom scripts → specific alert fires → remediation script runs first, pages human only if it fails. Automatic.
+
+Result at Step2Dev: 94% of incidents resolve without any human touching anything.
+
+Guide → step2dev.io/self-healing
+#SRE #Automation #Kubernetes #DevOps #CloudNative`,
+  cta:"Follow @Yash_step2dev — SRE automation tips every week 🤖",
+  visual:"Self-healing loop diagram — Detect → Alert → Remediate → Verify → back to Detect",
+  medium_title:"Self-Healing Infrastructure: How to Make Your Systems Automatically Fix Themselves",
+  medium_hook:"The goal is not to reduce incidents. The goal is to make incidents irrelevant.",
+  early_user:"Step2Dev shows you which incidents were auto-resolved vs human-resolved → step2dev.io"},
+
+  {day:15,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"HALFWAY: 15 best DevOps lessons from 15 days of daily content — mega thread:",
+  tweet:`🧵 Halfway point. Here are the 15 best DevOps lessons from 15 days of daily content:
+
+1/ Docker layer caching alone can cut your pipeline time by 40%. Fix your Dockerfile order.
+
+2/ Kubernetes is not the answer for most teams. Pick the right tool for your scale.
+
+3/ GitOps is DevOps with Git as the control plane. ArgoCD + GitHub Actions is the implementation.
+
+4/ Secrets in code = security incident waiting to happen. Use Vault or OIDC. Today.
+
+5/ DORA metrics matter more than sprint velocity for predicting team performance.
+
+6/ A rollback that takes 60 seconds is worth more than any monitoring tool.
+
+7/ Self-healing infra means 94% of incidents resolve without paging anyone.
+
+8/ AWS costs spiral because of zombie resources, not traffic. Audit monthly.
+
+9/ The Grafana OSS stack replaces $1,000/month in monitoring tools for free.
+
+10/ Every pipeline should have parallel jobs. Sequential = unnecessary waiting.
+
+11/ Platform Engineering is the future of DevOps. Start learning Backstage.
+
+12/ Incident response without a runbook is expensive chaos. Write your runbook today.
+
+13/ Docker best practices in production: multi-stage, non-root, pinned versions, Trivy scans.
+
+14/ The reply game on Twitter beats posting alone. Add value to big accounts daily.
+
+15/ Build in public. The community will help you build better than you can alone.
+
+Follow @Yash_step2dev for days 16 through 30 🚀
+#DevOps #Lessons #BuildInPublic #SRE #Step2Dev`,
+  cta:"🔁 RT this mega-thread. It's a free DevOps crash course in one scroll.",
+  visual:"15 tips in a numbered card grid layout — compact, dark theme, printable",
+  medium_title:"15 DevOps Lessons From 15 Days of Daily Content: The Best of the First Half",
+  medium_hook:"I challenged myself to publish one DevOps lesson every day. Here are the 15 that matter most.",
+  early_user:"Step2Dev implements lessons 6, 7, 8, 9, and 14 automatically → step2dev.io"},
+
+  // ─── DAY 16 ───
+  {day:16,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"Terraform state management — the part that breaks most teams:",
+  tweet:`Terraform state management — the part that breaks most teams:
+
+THE PROBLEM:
+→ Local state in terraform.tfstate = works for 1 person
+→ Two engineers run terraform apply simultaneously = state corruption
+→ Lost state file = you no longer manage your infrastructure
+
+THE SOLUTION — remote state with locking:
+
+FOR AWS:
+→ S3 bucket for state storage
+→ DynamoDB table for state locking
+→ One apply runs at a time. Always.
+
+FOR GCP:
+→ GCS bucket (built-in locking)
+
+FOR TEAMS:
+→ Terraform Cloud free tier (up to 5 users)
+→ Atlantis self-hosted (PR-based workflows)
+
+CRITICAL: Never commit terraform.tfstate to Git. Ever.
+
+Full setup guide → step2dev.io/terraform-state
+#Terraform #IaC #DevOps #AWS #CloudNative`,
+  cta:"Follow @Yash_step2dev — one Terraform tip every week. No fluff.",
+  visual:"Architecture diagram — S3 state bucket + DynamoDB lock table with flow arrows",
+  medium_title:"Terraform State Management: The Complete Guide for Teams (Remote + Locking)",
+  medium_hook:"The most dangerous thing in DevOps is two engineers running terraform apply at the same time.",
+  early_user:"Step2Dev shows Terraform plan and apply status in your unified dashboard → step2dev.io"},
+
+  {day:16,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"Why I quit a stable DevOps job to build Step2Dev — the full honest story:",
+  tweet:`🧵 Why I quit a stable DevOps job to build Step2Dev — the full honest story:
+
+1/ Everyone asked "why would you leave a good salary and job security?" Here's why.
+
+2/ In every DevOps team I ever worked in, the same problem existed:
+→ Jira for tasks
+→ GitHub for code
+→ Jenkins for CI
+→ ArgoCD for CD
+→ Grafana for metrics
+→ Vault for secrets
+→ Slack for alerts
+= 7 tools. 7 contexts. 7x the cognitive load. Zero unified view.
+
+3/ I tried convincing my employers to solve this. The answer was always: "That's just how DevOps works."
+
+4/ I ran the math: a 5-person DevOps team context-switching between 10 tools loses 2+ hours per engineer per day. That's $200k+ per year in lost productivity for a mid-size company.
+
+5/ I realized: if I don't build this, nobody will. At least not for teams like the ones I worked in.
+
+6/ 6 months later:
+→ MVP is live
+→ First teams are using it in beta
+→ Community of [X] DevOps engineers following the build
+→ Regret: zero. Stress: a lot. Satisfaction: immeasurable.
+
+7/ Step2Dev = your entire DevOps workflow in one place.
+One dashboard. One source of truth. Zero tab switching.
+
+Join us → step2dev.io 🚀
+#BuildInPublic #SaaS #DevOps #Founder #IndieHacker`,
+  cta:"RT if you've ever quit something safe to build something meaningful 💪",
+  visual:"Quote card — most impactful line from the story on a gradient background",
+  medium_title:"Why I Quit My DevOps Job to Build Step2Dev: The Real Story",
+  medium_hook:"It was not a spontaneous decision. It was 3 years of the same frustration stacking up.",
+  early_user:"We are onboarding founding users now. Free forever for the first 50 → step2dev.io/founding"},
+
+  // ─── DAY 17 ───
+  {day:17,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Stop rebuilding your CI pipelines from scratch. Here's the GitHub Actions workflow template I use on every project:",
+  tweet:`Stop rebuilding your CI pipelines from scratch. Here's the GitHub Actions template I use on every project:
+
+THE COMPLETE TEMPLATE STRUCTURE:
+
+on: push to main, pull_request
+
+JOBS (all run in parallel):
+→ build: Docker multi-stage build with layer cache
+→ test: Unit + integration tests with coverage report
+→ lint: ESLint / golangci-lint / flake8
+→ security: Trivy image scan + Snyk dependency check
+
+ON MERGE TO MAIN (sequential):
+→ push: Tag image with commit SHA, push to ECR
+→ deploy: Kustomize update → ArgoCD detects → syncs
+
+BUILT-IN:
+→ Slack notification on success and failure
+→ PR comment with test coverage %
+→ Artifact upload for test results
+
+Copy the full YAML →
+step2dev.io/gha-template
+
+#GitHub #CICD #DevOps #Automation #CloudNative`,
+  cta:"Save 🔖 this template. Follow @Yash_step2dev for more production-ready configs.",
+  visual:"GitHub Actions workflow diagram — jobs in parallel + sequential deploy phase",
+  medium_title:"The GitHub Actions Template I Use on Every Project (Copy-Paste Ready)",
+  medium_hook:"I've set up GitHub Actions pipelines at 12 different companies. This is the template I always end up at.",
+  early_user:"Step2Dev generates this pipeline config automatically when you connect your repo → step2dev.io"},
+
+  {day:17,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"20 real DevOps interview questions with full answers — prep thread:",
+  tweet:`🧵 20 real DevOps interview questions with full answers — prep thread:
+
+1/ I've been on both sides of 50+ DevOps interviews. These are the questions that actually matter.
+
+2/ Q1: Explain blue/green vs canary deployments.
+A: Blue/green = two identical environments, switch traffic instantly. Canary = gradually shift traffic % to new version. Use blue/green for instant rollback. Use canary when you want to test with 5% of users first.
+
+3/ Q2: How do you manage secrets in CI/CD?
+A: GitHub Secrets + OIDC for most teams. Vault for advanced secret rotation. Never in the codebase. Never in plain text env vars committed to repo.
+
+4/ Q3: Walk me through your incident response process.
+A: Alert fires → acknowledge in 5 min → classify severity → mitigate first, root cause after → postmortem within 48h.
+
+5/ Q4: How would you reduce a 45-minute pipeline to under 10 minutes?
+A: Parallel jobs. Docker layer cache. Separate test stages. Skip unchanged paths. Run only affected tests.
+
+6/ Q5: What is the difference between a pod and a deployment in Kubernetes?
+A: Pod = one or more containers. Deployment = desired state manager for pods. You almost never create pods directly.
+
+7/ Threads continue with 15 more answers covering: HPA, etcd, GitOps, IaC drift, zero-downtime deploys, DORA, and more.
+
+Full guide with all 20 answers →
+step2dev.io/interview-prep
+
+#DevOps #Interview #Career #SRE #Kubernetes`,
+  cta:"RT to help every DevOps engineer preparing for interviews right now 📋",
+  visual:"Q&A card layout — question bold on top, answer below in a notebook dark style",
+  medium_title:"20 Real DevOps Interview Questions With Full Answers (2025 Edition)",
+  medium_hook:"I have sat in 50 DevOps interviews. These 20 questions determined the outcome almost every time.",
+  early_user:"The engineers using Step2Dev tend to nail these questions. Real tool experience matters → step2dev.io"},
+
+  // ─── DAY 18 ───
+  {day:18,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"AWS IAM — the 5 rules that will keep you from getting hacked:",
+  tweet:`AWS IAM — the 5 rules that will keep you from getting hacked:
+
+RULE 1: Least privilege. Always.
+→ Every role gets only the exact permissions it needs. Audit quarterly.
+
+RULE 2: No inline policies.
+→ Use managed policies. They're auditable, reusable, version-controlled.
+
+RULE 3: MFA on every human IAM user.
+→ Console access without MFA is a security incident waiting to happen.
+
+RULE 4: No IAM users for applications.
+→ Use IAM roles with instance profiles or OIDC federation. No static keys.
+
+RULE 5: Enable CloudTrail on every account, every region.
+→ When something goes wrong (not if) you need the audit log.
+
+Bonus: AWS IAM Access Analyzer runs free. Enable it right now.
+
+→ step2dev.io
+#AWS #IAM #Security #DevSecOps #CloudNative`,
+  cta:"Follow @Yash_step2dev — one AWS security rule every week 🔐",
+  visual:"5 rule cards — each with rule name, explanation, and a one-line implementation tip",
+  medium_title:"5 AWS IAM Rules That Will Keep You From Getting Hacked",
+  medium_hook:"90% of AWS security incidents I've investigated broke at least one of these 5 rules.",
+  early_user:"Step2Dev audits your IAM usage as part of the security overview → step2dev.io"},
+
+  {day:18,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"I interviewed 20 senior DevOps engineers. Here's what they ALL agreed matters in 2025:",
+  tweet:`🧵 I interviewed 20 senior DevOps/SRE engineers this month. Here's what they all agreed on:
+
+1/ The patterns were too consistent to ignore. Here's the consensus:
+
+2/ #1: Observability is not monitoring.
+→ Monitoring tells you something is broken.
+→ Observability tells you WHY.
+→ Invest in distributed tracing. Most teams don't.
+
+3/ #2: Platform Engineering is the future of the role.
+→ Stop being reactive ops. Start building developer platforms.
+→ The engineers building IDPs right now are 2 years ahead.
+
+4/ #3: Security is shifting left. Permanently.
+→ DevSecOps is not a job title. It's a pipeline stage.
+→ Trivy, Snyk, SAST — in the pipeline or not at all.
+
+5/ #4: AI is entering the pipeline faster than anyone expected.
+→ GitHub Copilot for infrastructure code.
+→ AI-assisted runbook generation.
+→ Automated PR reviews for infra changes.
+
+6/ #5: Soft skills matter more than certifications.
+→ Every senior engineer said this unprompted.
+→ Communication during incidents. Documentation. Mentoring.
+→ These separate the staff engineers from the seniors.
+
+7/ Full breakdown of all 20 interviews →
+step2dev.io/blog
+
+#DevOps #SRE #Career #PlatformEngineering #Step2Dev`,
+  cta:"Follow @Yash_step2dev for weekly DevOps career and technical insights 📈",
+  visual:"5 insight cards — quote-style layout, numbered, clean dark gradient",
+  medium_title:"20 Senior DevOps Engineers Told Me What Actually Matters in 2025 — Here's the Pattern",
+  medium_hook:"I expected disagreement. What I found was a remarkably consistent set of priorities.",
+  early_user:"Step2Dev is building toward all 5 of these trends. Be part of it → step2dev.io"},
+
+  // ─── DAY 19 ───
+  {day:19,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Helm charts — the 5 mistakes that break production deployments:",
+  tweet:`Helm charts — the 5 mistakes that break production deployments:
+
+MISTAKE 1: Using 'latest' image tag
+→ Non-deterministic. Different nodes pull different images.
+→ Fix: Always use commit SHA or semantic version tags.
+
+MISTAKE 2: No resource requests or limits in values.yaml
+→ Your pods will starve or hog resources in shared clusters.
+→ Fix: Set requests AND limits for every workload.
+
+MISTAKE 3: Hardcoded secrets in values.yaml
+→ Committed to Git = leaked to anyone with repo access.
+→ Fix: Use External Secrets Operator or Vault Agent Injector.
+
+MISTAKE 4: No pre-upgrade and pre-rollback hooks
+→ Schema migrations run at wrong time = data loss risk.
+→ Fix: Use Helm hooks for database migrations.
+
+MISTAKE 5: Not testing charts with helm template + kubeval
+→ YAML syntax errors caught only in production.
+→ Fix: Add helm lint + helm template in your CI pipeline.
+
+→ step2dev.io/helm-guide
+#Helm #Kubernetes #DevOps #CloudNative #K8s`,
+  cta:"Save 🔖 and follow for weekly Kubernetes production tips",
+  visual:"5 mistake/fix cards in alternating red/green layout",
+  medium_title:"5 Helm Chart Mistakes That Break Production Deployments (And How to Fix Them)",
+  medium_hook:"I've seen all 5 of these mistakes cause production incidents at companies that should have known better.",
+  early_user:"Step2Dev validates Helm releases and shows deploy history by chart version → step2dev.io"},
+
+  {day:19,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"Build a complete monitoring stack from scratch in 30 minutes — full guide:",
+  tweet:`🧵 Build a complete monitoring stack from scratch in 30 minutes — full guide:
+
+1/ You don't need Datadog. Here's the full open-source stack and how to deploy it fast.
+
+2/ THE STACK:
+→ Prometheus → metrics collection and alerting rules
+→ Grafana → visualization and dashboards
+→ Loki → log aggregation (like Elasticsearch but lighter)
+→ Promtail → log shipper for Loki
+→ Alertmanager → alert routing to Slack, PagerDuty, email
+→ Tempo → distributed tracing (optional but powerful)
+
+3/ DEPLOY IN 5 MINUTES (Docker Compose):
+→ Clone: github.com/grafana/grafana-docker-compose
+→ docker compose up -d
+→ Open localhost:3000 (admin/admin)
+→ Done. Prometheus is already scraping your services.
+
+4/ CONNECT YOUR APP:
+→ Add Prometheus client library to your app
+→ Expose /metrics endpoint
+→ Add scrape config to prometheus.yml
+→ Metrics visible in Grafana in 60 seconds
+
+5/ SET UP ALERTS:
+→ Copy the 5 PromQL rules from yesterday's thread
+→ Add to prometheus/rules.yml
+→ Configure Alertmanager to route to your Slack channel
+→ Test by killing a pod manually
+
+6/ BUILD YOUR FIRST DASHBOARD:
+→ Import dashboard ID 315 (Kubernetes cluster overview)
+→ Import dashboard ID 12740 (Node Exporter)
+→ Both import in under 30 seconds
+
+7/ Full docker-compose.yml and configs →
+step2dev.io/monitoring-stack
+
+#Grafana #Prometheus #DevOps #Monitoring #Kubernetes`,
+  cta:"RT to help every developer set up proper monitoring this weekend 📊",
+  visual:"Full monitoring stack architecture diagram — all 6 components with data flow arrows",
+  medium_title:"Build a Complete Monitoring Stack in 30 Minutes: Prometheus + Grafana + Loki (Full Guide)",
+  medium_hook:"I've helped 15 teams replace Datadog with this stack. The total migration time is usually one afternoon.",
+  early_user:"Step2Dev comes with this monitoring stack pre-configured. Zero setup required → step2dev.io"},
+
+  // ─── DAY 20 ───
+  {day:20,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"CI/CD security checklist — 10 things to add to your pipeline right now:",
+  tweet:`CI/CD security checklist — 10 things to add to your pipeline this week:
+
+☑️ 1. Trivy → container image CVE scanning
+☑️ 2. Snyk or Dependabot → dependency vulnerability checks
+☑️ 3. SAST with Semgrep or SonarQube → static code analysis
+☑️ 4. OIDC federation → no static cloud credentials
+☑️ 5. Secret detection → GitLeaks or TruffleHog on every PR
+☑️ 6. Signed images with Cosign → verify image integrity
+☑️ 7. Least-privilege service accounts for every runner
+☑️ 8. Branch protection rules → required reviews + status checks
+☑️ 9. Audit logs enabled on all pipeline runs
+☑️ 10. SBOM generation → know exactly what's in every image
+
+Score yourself. How many does your team have?
+
+→ step2dev.io/security-checklist
+#DevSecOps #Security #CICD #DevOps #CloudNative`,
+  cta:"Follow @Yash_step2dev — DevSecOps tip every week. Your pipeline should be a security asset.",
+  visual:"Printable checklist poster — 10 items with tool icons and checkboxes",
+  medium_title:"The CI/CD Security Checklist: 10 Things to Add to Your Pipeline Right Now",
+  medium_hook:"Most pipelines ship code fast. Almost none ship code securely. Here is how to do both.",
+  early_user:"Step2Dev runs 6 of these 10 checks automatically on every pipeline run → step2dev.io"},
+
+  {day:20,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"Build in Public Day 20 — what's working, what isn't, and the real numbers:",
+  tweet:`🧵 Build in Public Day 20 — what's working, what isn't, and the honest numbers:
+
+1/ 20 days of daily content. Let me be completely transparent about what I've found.
+
+2/ WHAT IS WORKING:
+→ Build-in-public threads get 10x more engagement than standalone tips
+→ Threads over 8 tweets consistently outperform shorter ones
+→ Posting with a visual gets 3x more impressions than text only
+→ Replying on big DevOps accounts within 30 minutes of their posts drives most profile visits
+
+3/ WHAT IS NOT WORKING:
+→ Generic "hot take" posts get low engagement unless truly controversial
+→ Posting without a clear visual loses half the potential reach
+→ Posting at the wrong time (after 9pm) gets almost no initial traction
+
+4/ NUMBERS SO FAR (tracking live):
+→ Twitter followers: [live count]
+→ Medium reads: [live count]
+→ step2dev.io visits: [live count]
+→ Beta signups: [live count]
+→ Posts published: 40 (2/day × 20 days)
+
+5/ BIGGEST SURPRISE:
+Consistent daily posting compounds. The 20th post gets 5x the organic reach of the 1st post with identical content. The algorithm rewards consistency above almost everything else.
+
+6/ Day 30 full reveal is coming. Follow to see the final metrics.
+
+→ step2dev.io
+#BuildInPublic #Step2Dev #SaaS #Growth #DevOps`,
+  cta:"Follow to see the Day 30 reveal 👀 I'll share everything including what failed.",
+  visual:"Dashboard metrics card — Day 1 vs Day 20 comparison with growth percentages",
+  medium_title:"20 Days Building Step2Dev in Public: What's Working, What Isn't, and the Real Numbers",
+  medium_hook:"I promised transparency. Here is every number and every lesson, the good and the bad.",
+  early_user:"We are still accepting beta users. Free access for anyone who gives real feedback → step2dev.io/beta"},
+
+  // ─── DAY 21 ───
+  {day:21,slot:"AM",type:"Tip",audience:"Developer",
+  hook:"From zero to DevOps engineer in 6 months — the exact roadmap:",
+  tweet:`From zero to DevOps engineer in 6 months — the exact roadmap:
+
+MONTH 1-2: FOUNDATIONS
+→ Linux fundamentals (file system, processes, networking)
+→ Git branching strategies (GitFlow, trunk-based)
+→ Bash scripting (automation basics)
+
+MONTH 3: CONTAINERS + CI/CD
+→ Docker (build, run, compose, multi-stage)
+→ GitHub Actions (workflows, jobs, secrets)
+→ Basic CI/CD pipeline running in a real project
+
+MONTH 4: CLOUD + INFRASTRUCTURE
+→ AWS or GCP core services (compute, storage, networking)
+→ Terraform basics (providers, resources, modules, state)
+
+MONTH 5: KUBERNETES
+→ Core concepts (pods, deployments, services, ingress)
+→ Helm charts (install, template, customize)
+→ CKA exam prep begins
+
+MONTH 6: OBSERVABILITY + SECURITY
+→ Prometheus + Grafana monitoring
+→ DevSecOps basics (Trivy, Snyk, secret management)
+→ Build one real project using everything above
+
+Certifications to target: CKA + AWS Solutions Architect Associate
+
+→ step2dev.io/roadmap
+#DevOps #Career #Roadmap #Kubernetes #Learning`,
+  cta:"RT if you're on this journey right now 🙋 I answer questions in DMs.",
+  visual:"6-month timeline — tools and skills per month as icons on a clean horizontal roadmap",
+  medium_title:"From Zero to DevOps Engineer in 6 Months: The Exact Roadmap That Works in 2025",
+  medium_hook:"I wish I had this roadmap when I started. It would have saved me 18 months of wasted time.",
+  early_user:"Step2Dev is a great sandbox to practice real DevOps workflows while learning → step2dev.io"},
+
+  {day:21,slot:"PM",type:"Thread",audience:"Cloud Engineer",
+  hook:"The complete cost-efficient DevOps architecture on AWS — every decision explained:",
+  tweet:`🧵 The complete cost-efficient DevOps architecture on AWS — every decision explained:
+
+1/ AWS can bankrupt you or cost almost nothing. The difference is entirely in your architecture choices.
+
+2/ COMPUTE STRATEGY:
+→ Production baseline → Reserved Instances (1-year, up to 40% discount)
+→ Variable production load → On-Demand
+→ Dev and staging → 100% Spot Instances (70% cheaper)
+→ Batch workloads → Spot with interruption handling
+
+3/ STORAGE STRATEGY:
+→ Active data → S3 Standard
+→ Accessed weekly → S3 Intelligent-Tiering (auto moves data)
+→ Accessed monthly → S3 Standard-IA
+→ Archives → S3 Glacier Instant Retrieval
+→ Never delete unused EBS volumes. Audit monthly with a script.
+
+4/ DATABASE STRATEGY:
+→ Variable or unpredictable load → Aurora Serverless v2
+→ Predictable load → Reserved RDS instances
+→ Caching → ElastiCache with aggressive TTLs
+
+5/ NETWORKING STRATEGY:
+→ CloudFront in front of everything → cache aggressively → less origin hits
+→ NAT Gateway is extremely expensive for high-traffic apps → consider NAT Instance
+
+6/ COST VISIBILITY:
+→ AWS Cost Explorer — review weekly
+→ Infracost in your CI pipeline → cost estimate on every Terraform PR
+→ Budget alerts at 80% and 100% of monthly target
+→ Monthly cleanup script for orphaned resources
+
+7/ Cost architecture template → step2dev.io/aws-cost
+
+#AWS #FinOps #CloudCost #DevOps #Terraform`,
+  cta:"RT this to every DevOps team that opened an AWS bill and felt physical pain 😅",
+  visual:"AWS cost optimization architecture diagram — services with cost tier labels annotated",
+  medium_title:"The Complete Guide to Cost-Efficient DevOps Architecture on AWS in 2025",
+  medium_hook:"AWS costs spiral not because of traffic. They spiral because of decisions made at 2am under pressure.",
+  early_user:"Step2Dev shows cloud costs alongside deployment history. Correlate spend with changes → step2dev.io"},
+
+  // ─── DAY 22 ───
+  {day:22,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"The real difference between junior and senior DevOps engineers (it's never the tools):",
+  tweet:`The real difference between junior and senior DevOps engineers is never the tools. Here's what it actually is:
+
+JUNIOR: "The pipeline is broken."
+SENIOR: "The pipeline failed at the integration test stage due to a race condition in the test database teardown. Here's the one-line fix and the root cause."
+
+THE REAL GAP:
+
+→ Systems thinking: understanding how one change ripples through the entire stack
+→ Blast radius awareness: knowing what else breaks when X breaks
+→ Documentation habits: writing runbooks others can actually execute
+→ Asking WHY before HOW: understanding the business reason for every decision
+→ Owning incidents end-to-end: not just fixing but preventing recurrence
+
+You don't level up by learning more tools.
+You level up by changing how you think about systems.
+
+→ step2dev.io
+#DevOps #Career #SRE #Engineering #Growth`,
+  cta:"Follow @Yash_step2dev — career + technical content for DevOps engineers every day 📈",
+  visual:"Junior vs Senior thought bubble side-by-side — contrast in problem description depth",
+  medium_title:"The Real Difference Between Junior and Senior DevOps Engineers (It's Not the Tools)",
+  medium_hook:"I've hired 20 DevOps engineers. The gap between junior and senior is always the same thing.",
+  early_user:"Senior engineers at growing companies use Step2Dev to get the unified view they need → step2dev.io"},
+
+  {day:22,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"Step2Dev feature deep dive — how our unified pipeline dashboard actually works:",
+  tweet:`🧵 Step2Dev feature deep dive — how our unified dashboard actually works and why we built it this way:
+
+1/ The #1 request from every DevOps team we talked to was the same: "Give us one place to see everything."
+
+2/ THE PROBLEM WE KEPT SEEING:
+→ GitHub for pipeline status
+→ ArgoCD for deployment status
+→ Grafana for metrics
+→ Vault for secret status
+→ AWS console for costs
+→ PagerDuty for incidents
+= 6 browser tabs open. Constant context switching. Information scattered.
+
+3/ WHAT STEP2DEV SHOWS ON ONE SCREEN:
+→ All pipeline statuses (GitHub Actions, GitLab CI, Bitbucket)
+→ Deployment history across all environments
+→ Real-time Kubernetes pod health and resource usage
+→ Alert feed from Prometheus/Alertmanager
+→ Cloud cost metrics from AWS, GCP, or Azure
+→ DORA metrics calculated automatically
+
+4/ THE ARCHITECTURE:
+→ Read-only integrations (we never modify your infrastructure)
+→ OAuth for GitHub, GitLab, Bitbucket
+→ OIDC for cloud providers (no stored credentials)
+→ WebSocket for real-time updates
+
+5/ WHY READ-ONLY MATTERS:
+→ Zero risk to your production systems
+→ CTOs trust it immediately
+→ Security team approves it in the same meeting
+
+6/ We're opening beta slots this week.
+Drop a 🙋 below and I'll DM you a personal invite.
+
+→ step2dev.io/beta
+#Step2Dev #DevOps #SaaS #BuildInPublic #ProductLaunch`,
+  cta:"Drop 🙋 below to get a personal beta invite to Step2Dev this week",
+  visual:"Product dashboard mockup — unified view with all 6 data sources labeled",
+  medium_title:"Inside Step2Dev: How We Built a Unified DevOps Dashboard That Actually Works",
+  medium_hook:"Building a dashboard that aggregates 8 data sources in real-time without storing credentials was hard. Here's how.",
+  early_user:"Drop a comment below and I'll send you a personal beta invite this week → step2dev.io/beta"},
+
+  // ─── DAY 23 ───
+  {day:23,slot:"AM",type:"Tip",audience:"Developer",
+  hook:"10 things you should automate in your DevOps workflow right now:",
+  tweet:`10 things you should automate in your DevOps workflow right now:
+
+1. Dependency updates → Dependabot or Renovate (set it and forget it)
+2. Security scanning → Trivy + Snyk on every PR automatically
+3. Code formatting → pre-commit hooks run before every commit locally
+4. Docker base image updates → Dependabot watches your Dockerfile too
+5. SSL certificate renewal → cert-manager handles this in Kubernetes
+6. Database backups → scheduled CronJob with Slack confirmation
+7. Changelog generation → git-cliff or release-please on every tag
+8. PR labeling → GitHub Actions labels PRs by changed files automatically
+9. Deploy notifications → Slack message on every successful production deploy
+10. Cost reports → weekly AWS Cost Explorer email to the team
+
+Most teams automate #1 and #8 and stop there.
+The other 8 are where you get your time back.
+
+→ step2dev.io
+#DevOps #Automation #SRE #Productivity #GitHub`,
+  cta:"Save 🔖 this list. Pick one to automate this week. Just one. Then keep going.",
+  visual:"10-item checklist poster — tools listed next to each item, clean dark design",
+  medium_title:"10 DevOps Workflow Automations That Will Give You Back 5 Hours Every Week",
+  medium_hook:"The difference between a 40-hour DevOps week and a 30-hour one is usually these 10 automations.",
+  early_user:"Step2Dev automates numbers 6, 8, and 9 out of the box for connected repos → step2dev.io"},
+
+  {day:23,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"CI/CD platforms compared — I tested GitHub Actions, GitLab CI, Jenkins, CircleCI, and Drone CI on the same project:",
+  tweet:`🧵 CI/CD platforms compared — I tested GitHub Actions, GitLab CI, Jenkins, CircleCI, and Drone CI on the exact same project:
+
+1/ Same app. Same pipeline logic. Different platforms. Here are honest results.
+
+2/ GITHUB ACTIONS — 9/10
+✅ Native GitHub integration, massive marketplace
+✅ OIDC support for all major cloud providers
+✅ Reusable workflows reduce duplication significantly
+❌ YAML gets complex fast for large mono-repos
+Best for: teams already on GitHub (most teams)
+
+3/ GITLAB CI — 8.5/10
+✅ Best all-in-one: code + CI + registry + security scanning
+✅ Auto DevOps can scaffold an entire pipeline automatically
+❌ Expensive at scale if self-hosting is not an option
+Best for: larger teams, enterprises, self-hosted requirements
+
+4/ JENKINS — 6/10
+✅ Maximum flexibility, 1,800+ plugins
+✅ On-prem with full control
+❌ High maintenance overhead, Groovy DSL is painful
+❌ Security responsibility is entirely yours
+Best for: regulated industries that cannot use SaaS CI
+
+5/ CIRCLECI — 7.5/10
+✅ Extremely fast spin-up, great caching
+✅ Clean YAML syntax
+❌ Gets expensive quickly at scale
+Best for: teams that need raw speed and are willing to pay
+
+6/ DRONE CI — 7/10
+✅ Lightweight, open-source, Docker-native
+✅ Easy self-hosting
+❌ Smaller community, fewer integrations
+Best for: minimal infra teams who want simplicity
+
+7/ MY RECOMMENDATION:
+→ Under 10 engineers on GitHub: GitHub Actions. Full stop.
+→ Larger teams needing everything in one place: GitLab CI.
+→ Legacy enterprise on-prem: Jenkins (and plan your migration).
+
+Full comparison table → step2dev.io/cicd-comparison
+
+#CICD #DevOps #GitHub #GitLab #Jenkins`,
+  cta:"RT + tell me which one you use in production 👇 Spicy answers welcome 🌶️",
+  visual:"Comparison table with radar chart showing each platform across 5 dimensions",
+  medium_title:"CI/CD Platforms Compared: GitHub Actions vs GitLab CI vs Jenkins vs CircleCI vs Drone (2025)",
+  medium_hook:"I ran the same pipeline on 5 different platforms so you don't have to.",
+  early_user:"Step2Dev integrates with all 5 of these platforms simultaneously → step2dev.io"},
+
+  // ─── DAY 24 ───
+  {day:24,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"99.9% uptime is easy to promise. Here's what it actually takes to deliver:",
+  tweet:`99.9% uptime is easy to promise. Here's what it actually takes to deliver:
+
+UPTIME SLA MATH:
+→ 99.9% = 8.7 hours downtime allowed per year
+→ 99.99% = 52 minutes per year
+→ 99.999% = 5.26 minutes per year
+
+TO ACHIEVE 99.9% YOU NEED:
+✅ Multi-AZ deployment for every critical service
+✅ Health checks with automatic pod restart
+✅ Graceful shutdown handling (no mid-request kills)
+✅ Circuit breakers for downstream dependencies
+✅ Read replicas for database failover
+
+TO ACHIEVE 99.99% ADD:
+✅ Multi-region active-passive setup
+✅ Chaos engineering tests in staging
+✅ Sub-60-second automatic failover
+
+TO ACHIEVE 99.999%:
+→ That is a full-time team, not a feature. Plan accordingly.
+
+What SLA does your product promise? What do you actually deliver? Reply honestly 👇
+
+→ step2dev.io
+#SRE #Uptime #DevOps #Reliability #AWS`,
+  cta:"Follow @Yash_step2dev for SRE + reliability engineering content every week",
+  visual:"SLA tier table — uptime %, downtime per year, and requirements per tier with color bands",
+  medium_title:"What Does 99.9% vs 99.99% vs 99.999% Uptime Actually Require? A Complete SRE Guide",
+  medium_hook:"Every startup promises 99.9% uptime in their sales deck. Almost none can tell you how they achieve it.",
+  early_user:"Step2Dev tracks your actual uptime against your SLA targets in real-time → step2dev.io"},
+
+  {day:24,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"I spent one Sunday learning Dagger.io. Here's everything you need to know:",
+  tweet:`🧵 I spent one Sunday learning Dagger.io. Here's everything you need to know and whether it's worth switching:
+
+1/ Dagger solves a real problem I've had for years: CI/CD pipelines are YAML files that you can't run locally without push-to-test.
+
+2/ THE CORE IDEA:
+→ Write your pipeline in actual code: Go, Python, or TypeScript
+→ Run the same pipeline locally with 'dagger run'
+→ The exact same code runs in GitHub Actions, GitLab CI, or any other runner
+→ No more "it works locally but breaks in CI"
+
+3/ WHAT DAGGER DOES WELL:
+→ Full pipeline runs locally in Docker
+→ Automatic caching between steps
+→ Language-native APIs (if you know Go, you know your pipeline)
+→ Works inside existing CI/CD — not a replacement
+
+4/ WHAT IT DOESN'T DO WELL YET:
+→ Documentation is still sparse in some areas
+→ Community is smaller than GitHub Actions ecosystem
+→ Learning curve if your team doesn't write Go or Python
+
+5/ MY VERDICT AFTER ONE WEEKEND:
+→ For complex pipelines with lots of reusable logic: worth it
+→ For simple build/push/deploy pipelines: stick with GitHub Actions YAML
+→ Watch this closely. It's going to be huge in 2-3 years.
+
+6/ Full demo project →
+step2dev.io/dagger-demo
+
+#Dagger #CICD #DevOps #GitHub #Automation`,
+  cta:"RT if you're as excited about Dagger as I am 🚀 Or reply if you think it's hype. Let's debate.",
+  visual:"Dagger workflow diagram — local run vs CI run showing same code executing in both",
+  medium_title:"I Spent One Sunday Learning Dagger.io: Is It Worth Switching From GitHub Actions?",
+  medium_hook:"The promise: write your CI/CD pipeline in real code, run it locally, deploy it anywhere. Does it deliver?",
+  early_user:"Step2Dev will add Dagger support in Q2. Follow the build → step2dev.io"},
+
+  // ─── DAY 25 ───
+  {day:25,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Kubernetes networking explained — the part nobody teaches clearly:",
+  tweet:`Kubernetes networking explained — the part nobody teaches clearly:
+
+THREE SEPARATE NETWORKING LAYERS:
+
+1. NODE NETWORK
+→ Physical or virtual network between nodes
+→ Managed by your cloud provider or on-prem setup
+→ Every node needs to reach every other node
+
+2. POD NETWORK (cluster network)
+→ Every pod gets its own IP address
+→ Any pod can reach any other pod directly (no NAT)
+→ Implemented by CNI plugins: Calico, Flannel, Cilium
+
+3. SERVICE NETWORK
+→ Stable virtual IP for a group of pods
+→ kube-proxy maintains iptables rules for service routing
+→ Services don't actually exist as network interfaces — they are iptables rules
+
+WHY THIS MATTERS:
+→ Most K8s networking bugs come from confusion between these 3 layers
+→ Know which layer is broken before you debug
+
+Visual diagram →
+step2dev.io/k8s-networking
+
+#Kubernetes #Networking #DevOps #CloudNative #K8s`,
+  cta:"Follow @Yash_step2dev for K8s deep dives every week 🧠",
+  visual:"3-layer K8s networking diagram — node, pod, and service networks with distinct colors",
+  medium_title:"Kubernetes Networking Explained: The Three Layers Nobody Teaches You Clearly",
+  medium_hook:"I've debugged hundreds of Kubernetes networking issues. They all stem from confusion about the same 3 layers.",
+  early_user:"Step2Dev visualizes your K8s network topology alongside pipeline status → step2dev.io"},
+
+  {day:25,slot:"PM",type:"Thread",audience:"Founder/CEO/CTO",
+  hook:"The engineering metrics I track weekly as a DevOps founder — and why each one matters:",
+  tweet:`🧵 The engineering metrics I track weekly as a DevOps founder — and why each one matters for business:
+
+1/ Most founders track revenue metrics obsessively but have no visibility into their engineering health. Here's my weekly dashboard:
+
+2/ DEPLOYMENT FREQUENCY
+→ How often do we push to production?
+→ Why it matters: teams that deploy more frequently have fewer big-bang failures
+→ Target: at least once per day
+
+3/ LEAD TIME FOR CHANGES
+→ From first commit to running in production
+→ Why it matters: directly measures developer productivity and process friction
+→ Target: under 24 hours
+
+4/ CHANGE FAILURE RATE
+→ What % of deploys cause an incident or rollback
+→ Why it matters: tells you if your testing is actually working
+→ Target: under 10%
+
+5/ MEAN TIME TO RESTORE (MTTR)
+→ When something breaks, how fast do you recover?
+→ Why it matters: this is what your customers actually experience
+→ Target: under 1 hour for P1 incidents
+
+6/ PIPELINE SUCCESS RATE
+→ What % of CI runs pass without intervention?
+→ Why it matters: a flaky test suite is technical debt with a visible price
+→ Target: above 95%
+
+7/ These 5 metrics cost nothing to start tracking. They tell you more about your team than any sprint report.
+
+All 5 are auto-calculated in Step2Dev →
+step2dev.io
+
+#CTO #Engineering #Metrics #DevOps #Founder #DORA`,
+  cta:"Follow @Yash_step2dev if you want weekly engineering metrics insights for founders 📊",
+  visual:"5-metric weekly dashboard mockup — each metric with current value, trend, and target",
+  medium_title:"The 5 Engineering Metrics Every Founder Should Track Weekly (And Why)",
+  medium_hook:"I've talked to 30 founders this year. Almost none could tell me their deployment frequency.",
+  early_user:"Step2Dev calculates all 5 metrics automatically from your connected repos and cloud accounts → step2dev.io"},
+
+  // ─── DAY 26 ───
+  {day:26,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Zero-downtime deployments — 3 strategies explained with real tradeoffs:",
+  tweet:`Zero-downtime deployments — 3 strategies with real tradeoffs:
+
+STRATEGY 1: ROLLING UPDATE (Kubernetes default)
+→ Replace pods gradually, old and new versions run simultaneously
+→ Pros: simple, works out of the box
+→ Cons: database schema changes require backwards compatibility
+→ Use when: stateless services with backwards-compatible APIs
+
+STRATEGY 2: BLUE/GREEN DEPLOYMENT
+→ Two identical environments, switch load balancer instantly
+→ Pros: instant rollback (switch back), no mixed versions
+→ Cons: 2x infrastructure cost during switch
+→ Use when: you need instant rollback and can absorb the cost
+
+STRATEGY 3: CANARY DEPLOYMENT
+→ Send 5% of traffic to new version, monitor, increase gradually
+→ Pros: real user validation before full rollout
+→ Cons: complex traffic splitting, longer rollout window
+→ Use when: high-risk changes or large user bases
+
+MY RECOMMENDATION:
+→ Start with rolling. Add canary when you have >10k daily users.
+
+→ step2dev.io/deployment-strategies
+#DevOps #Kubernetes #CICD #SRE #CloudNative`,
+  cta:"Follow @Yash_step2dev — deployment strategy deep dive every week 🚀",
+  visual:"3-strategy comparison diagram showing traffic flow for each with pros/cons labels",
+  medium_title:"Zero-Downtime Deployments: Rolling vs Blue/Green vs Canary — Real Tradeoffs Explained",
+  medium_hook:"Every team eventually gets burned by choosing the wrong deployment strategy. Here's how to choose right.",
+  early_user:"Step2Dev supports all 3 deployment strategies and shows you traffic distribution live → step2dev.io"},
+
+  {day:26,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"Side projects that make money as a DevOps engineer — 5 real ideas with income potential:",
+  tweet:`🧵 Side projects that actually make money as a DevOps engineer — 5 real ideas with income potential:
+
+1/ You have skills that the market desperately needs and massively underpays for as a salaried employee. Here are 5 ways to change that.
+
+2/ IDEA 1: Terraform module marketplace
+→ Build reusable, production-grade Terraform modules
+→ Sell on Gumroad or your own site
+→ $50-$300 per module
+→ Income potential: $2,000-$10,000/month passive after initial work
+
+3/ IDEA 2: DevOps consulting for startups
+→ Help seed and Series A startups set up their infra
+→ Charge $150-$300/hour as a contractor
+→ Most need 20-40 hours of setup work
+→ Income potential: $5,000-$15,000 per engagement
+
+4/ IDEA 3: Technical course on a specific tool
+→ A focused Terraform, Kubernetes, or GitHub Actions course
+→ Udemy, Gumroad, or your own newsletter
+→ $50-$200 per course
+→ Income potential: $3,000-$20,000/month at scale
+
+5/ IDEA 4: DevOps audit as a service
+→ Review companies' pipelines, security, costs
+→ Deliver a 20-page PDF report with prioritized fixes
+→ Charge $1,500-$5,000 per audit
+→ Income potential: 2 audits/month = $10,000
+
+6/ IDEA 5: Build a SaaS for DevOps teams
+→ Exactly what I did with Step2Dev
+→ Hardest to start, highest upside
+→ Income potential: unlimited (and terrifying)
+
+7/ The real barrier is never skills. It's starting.
+
+Which one are you going to try first? Reply 👇
+
+→ step2dev.io
+#SideProject #IndieHacker #DevOps #Income #SaaS`,
+  cta:"RT to every DevOps engineer who should be making more money from their skills 💰",
+  visual:"5 idea cards — each with revenue range, effort level, and time to first dollar",
+  medium_title:"5 Side Projects That Make Real Money as a DevOps Engineer in 2025",
+  medium_hook:"DevOps skills are worth far more than most companies pay for them. Here is how to close that gap.",
+  early_user:"Step2Dev itself started as a side project. Now it's a real product. Step 1 is starting → step2dev.io"},
+
+  // ─── DAY 27 ───
+  {day:27,slot:"AM",type:"Tip",audience:"Cloud Engineer",
+  hook:"Multi-cloud architecture — the tradeoffs nobody tells you before you commit:",
+  tweet:`Multi-cloud architecture — the tradeoffs nobody tells you before you commit:
+
+THE CASE FOR MULTI-CLOUD:
+→ Avoid vendor lock-in
+→ Best-of-breed: AWS for compute, GCP for ML, Cloudflare for edge
+→ Redundancy if one provider has a major outage (rare but real)
+
+THE CASE AGAINST:
+→ 2x or 3x the operational complexity
+→ Different IAM models, different networking, different billing
+→ Your team has to be expert in 2-3 clouds simultaneously
+→ Egress costs when data crosses clouds can be brutal
+
+THE HONEST VERDICT:
+→ Most startups under $5M ARR: single cloud. Period.
+→ Mid-size companies: primary cloud + Cloudflare (not really multi-cloud)
+→ Enterprise: genuine multi-cloud but with a dedicated platform team
+
+WHAT ACTUALLY MAKES SENSE FOR MOST TEAMS:
+→ AWS (primary) + Cloudflare (edge/CDN/DNS) + specialized SaaS
+→ This is "cloud-smart", not "multi-cloud marketing"
+
+→ step2dev.io
+#Cloud #AWS #GCP #Azure #DevOps #Architecture`,
+  cta:"Follow @Yash_step2dev for weekly cloud architecture decision frameworks ☁️",
+  visual:"Multi-cloud decision tree — with team size, budget, and use case as decision nodes",
+  medium_title:"Multi-Cloud Architecture: The Real Tradeoffs Nobody Explains Before You Commit",
+  medium_hook:"Every vendor wants to sell you multi-cloud. Almost none of them will tell you the actual cost.",
+  early_user:"Step2Dev supports AWS, GCP, and Azure simultaneously. When you are ready, we are ready → step2dev.io"},
+
+  {day:27,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"Everything I know about making Kubernetes deployments actually reliable:",
+  tweet:`🧵 Everything I know about making Kubernetes deployments actually reliable — the complete thread:
+
+1/ I've managed Kubernetes clusters for 4 years. Here's every reliability practice worth keeping.
+
+2/ HEALTH CHECKS — non-negotiable:
+→ livenessProbe: is the container alive? Kill and restart if not.
+→ readinessProbe: is it ready to receive traffic? Remove from LB if not.
+→ startupProbe: give slow-starting apps time to boot without liveness killing them.
+→ All three. Every deployment. Always.
+
+3/ RESOURCE MANAGEMENT:
+→ Set CPU and memory requests AND limits on every container
+→ Use Vertical Pod Autoscaler (VPA) in recommendation mode to tune values
+→ Set Pod Disruption Budgets (PDB) so rolling updates don't take you to zero replicas
+
+4/ DEPLOYMENT STRATEGY:
+→ RollingUpdate with maxUnavailable: 0 and maxSurge: 1 for zero-downtime
+→ Set minReadySeconds: 10 to catch fast-crashing apps
+→ Keep at least 3 replicas for any production service
+
+5/ ROLLBACK STRATEGY:
+→ kubectl rollout undo deploy/app — always works, always tested
+→ ArgoCD rollback to previous Git SHA — one click, immediate
+→ Image digest pinning — you always know exactly what's running
+
+6/ OBSERVABILITY:
+→ Prometheus metrics scraping on every pod
+→ Grafana dashboard for each service
+→ Log aggregation with Loki
+→ Distributed tracing with Tempo for services that talk to each other
+
+7/ SECRETS MANAGEMENT:
+→ External Secrets Operator pulling from Vault or AWS Secrets Manager
+→ No Kubernetes native Secrets unless they are sealed with Sealed Secrets
+→ Rotate secrets automatically. Test rotation quarterly.
+
+8/ Full reliability checklist →
+step2dev.io/k8s-reliability
+
+#Kubernetes #SRE #DevOps #CloudNative #Reliability`,
+  cta:"RT this complete reliability guide to every K8s engineer you know 🚀",
+  visual:"Kubernetes reliability checklist — 6 categories with checkboxes and tool icons",
+  medium_title:"The Complete Kubernetes Reliability Guide: Everything Worth Doing in Production",
+  medium_hook:"I wrote this as the guide I wished I had when I first put Kubernetes in production.",
+  early_user:"Step2Dev monitors all of these K8s reliability signals in one place → step2dev.io"},
+
+  // ─── DAY 28 ───
+  {day:28,slot:"AM",type:"Tip",audience:"Developer",
+  hook:"AI tools that are actually changing how I work as a DevOps engineer in 2025:",
+  tweet:`AI tools that are actually changing how I work as a DevOps engineer in 2025:
+
+1. GitHub Copilot → inline suggestions for Terraform, YAML, and shell scripts. Saves 30-60 min/day.
+
+2. CodeRabbit → automatic PR reviews that catch real issues in infrastructure code. Not just formatting.
+
+3. Snyk AI → smart vulnerability explanations with context-aware fix suggestions.
+
+4. Claude → generating runbooks, incident postmortems, and architecture documentation from bullet points.
+
+5. AWS Q Developer → AWS-specific code assistance that knows IAM policies and service limits.
+
+WHAT AI DOES NOT REPLACE:
+→ System design thinking
+→ Debugging complex distributed failures
+→ Security judgment calls
+→ The decision to keep it simple
+
+AI cuts my mechanical work by 40%. It has not replaced a single decision.
+
+→ step2dev.io
+#AI #DevOps #GitHub #Copilot #Automation`,
+  cta:"Follow @Yash_step2dev — honest takes on AI in DevOps workflows weekly 🤖",
+  visual:"5 tool cards with logo, use case, and time saved per day estimate",
+  medium_title:"AI Tools That Are Actually Changing How I Work as a DevOps Engineer in 2025",
+  medium_hook:"I tested every AI coding tool for 3 months. Here is what stuck and what was hype.",
+  early_user:"Step2Dev uses AI to generate deployment summaries and flag anomalies automatically → step2dev.io"},
+
+  {day:28,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"Day 28 of building Step2Dev in public — here are the real numbers before the final reveal:",
+  tweet:`🧵 Day 28 of building Step2Dev in public — honest numbers before the Day 30 reveal:
+
+1/ Two days out from the finale. Here is everything tracked so far, unfiltered.
+
+2/ CONTENT METRICS:
+→ Total posts published: 56 (2/day × 28 days)
+→ Twitter/X followers: [live count — tracking]
+→ Total tweet impressions: [live count]
+→ Medium reads: [live count]
+→ Average engagement rate: [live count]
+
+3/ PRODUCT METRICS:
+→ step2dev.io total visitors: [live count]
+→ Beta signups: [live count]
+→ Active beta users: [live count]
+→ Features shipped this month: 9
+
+4/ WHAT THE DATA IS SHOWING:
+→ Threads consistently 4-8x more reach than standalone tweets
+→ Morning posts (7-8am) get 3x more impressions than evening posts
+→ Build-in-public content drives the most beta signups
+→ Technical deep dives drive the most follower growth
+
+5/ WHAT I WOULD DO DIFFERENTLY:
+→ Start the reply game on day 1 not day 7
+→ Build the email list from day 1 (started too late)
+→ Post more product screenshots — founder content with product = high trust
+
+6/ Two days left. Day 30 gets the full reveal with every number.
+
+Follow so you don't miss it 👀
+
+→ step2dev.io
+#BuildInPublic #Step2Dev #SaaS #Metrics #Founder`,
+  cta:"Follow @Yash_step2dev — Day 30 full reveal is in 2 days 👀",
+  visual:"Progress dashboard — Day 1 vs Day 28 with all key metrics and growth trajectories",
+  medium_title:"Day 28 Building Step2Dev in Public: The Pre-Finale Numbers and Honest Retrospective",
+  medium_hook:"Two days before the 30-day reveal. Here is everything I know so far.",
+  early_user:"Last call for beta invites before we close the founding user program → step2dev.io/beta"},
+
+  // ─── DAY 29 ───
+  {day:29,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"The DevOps skills that will matter most in 2026 — start learning these now:",
+  tweet:`The DevOps skills that will matter most in 2026 — start learning these now:
+
+RISING FAST:
+→ Platform Engineering (Backstage, Port, Crossplane)
+→ eBPF-based observability (Cilium, Pixie, Hubble)
+→ WebAssembly for edge compute (WASI, wasmCloud)
+→ Supply chain security (SLSA, Sigstore, in-toto)
+→ AI-assisted infrastructure (AWS Q, Copilot for Terraform)
+
+STAYING ESSENTIAL:
+→ Kubernetes (not going anywhere)
+→ Terraform (HCL or Pulumi flavour — pick one)
+→ Observability fundamentals (metrics, logs, traces)
+→ Linux and networking (always evergreen)
+
+DECLINING:
+→ Jenkins (slowly but visibly)
+→ Manual Ansible playbooks (replaced by K8s operators)
+→ Traditional ITIL-style change management
+
+Where are you investing your learning time in 2025?
+
+→ step2dev.io/roadmap
+#DevOps #Career #Learning #PlatformEngineering #Kubernetes`,
+  cta:"Follow @Yash_step2dev — I track the DevOps job market so you don't have to 📈",
+  visual:"Skills matrix — Rising / Stable / Declining categories with tool logos in each band",
+  medium_title:"DevOps Skills That Will Matter Most in 2026: Start Learning These Now",
+  medium_hook:"The DevOps landscape shifts faster than most engineers track. Here is what the job market is actually telling us.",
+  early_user:"Step2Dev is built on the rising technologies in this list. Come build with us → step2dev.io"},
+
+  {day:29,slot:"PM",type:"Thread",audience:"Developer",
+  hook:"30 things every DevOps team should automate before 2026 — the ultimate checklist:",
+  tweet:`🧵 30 things every DevOps team should automate before 2026 — the complete checklist:
+
+1/ If you're still doing any of these manually, you're losing hours every week.
+
+2/ PIPELINE AUTOMATION:
+☑️ 1. Dependency updates (Dependabot or Renovate)
+☑️ 2. Security scanning on every PR (Trivy + Snyk)
+☑️ 3. Code formatting (pre-commit hooks)
+☑️ 4. Secret detection (GitLeaks or TruffleHog)
+☑️ 5. SAST scanning (Semgrep)
+☑️ 6. Container image builds (GitHub Actions)
+☑️ 7. Changelog generation (git-cliff on every tag)
+☑️ 8. PR labeling by changed file path
+
+3/ INFRASTRUCTURE AUTOMATION:
+☑️ 9. Terraform plan on every PR (Atlantis)
+☑️ 10. Infracost estimate on every Terraform PR
+☑️ 11. Drift detection (Terraform or Driftctl)
+☑️ 12. SSL certificate renewal (cert-manager)
+☑️ 13. DNS record management (Terraform + Cloudflare)
+☑️ 14. Cloud cost weekly report email
+☑️ 15. Zombie resource cleanup (monthly script)
+
+4/ OPERATIONS AUTOMATION:
+☑️ 16. Database backups (scheduled CronJob + Slack confirmation)
+☑️ 17. Log rotation and archival
+☑️ 18. Metrics retention policy enforcement
+☑️ 19. K8s node pool upgrades (automated with approval gate)
+☑️ 20. Health check alerts with auto-remediation attempt first
+
+5/ DEPLOYMENT AUTOMATION:
+☑️ 21. Zero-downtime rolling deploys (default in K8s)
+☑️ 22. Automatic rollback on failed health checks
+☑️ 23. Deploy notifications to Slack with commit message + author
+☑️ 24. Post-deploy smoke test suite
+☑️ 25. DORA metrics calculation (auto from deployment events)
+
+6/ DEVELOPER EXPERIENCE:
+☑️ 26. Dev environment setup (devcontainer or Nix)
+☑️ 27. Local port-forwarding scripts
+☑️ 28. Runbook generation (AI-assisted)
+☑️ 29. On-call schedule rotation (automated)
+☑️ 30. Incident timeline reconstruction (auto from logs)
+
+7/ Full checklist with tool recommendations (free download) →
+step2dev.io/automation-checklist
+
+🔁 RT and save. Come back to this monthly.
+#DevOps #Automation #SRE #Productivity #Step2Dev`,
+  cta:"RT + save this checklist 🔖 Pick one item per week. In 30 weeks your team is transformed.",
+  visual:"Printable 30-item checklist poster — 5 categories, tools labeled, checkboxes",
+  medium_title:"30 DevOps Automations Every Team Should Have Before 2026 — The Ultimate Checklist",
+  medium_hook:"The teams I've worked with that were genuinely happy had one thing in common: they automated the boring parts.",
+  early_user:"Step2Dev handles 12 of these 30 automations out of the box with zero configuration → step2dev.io"},
+
+  // ─── DAY 30 ───
+  {day:30,slot:"AM",type:"Tip",audience:"DevOps Engineer",
+  hook:"Day 30. The lessons that mattered most from 30 days of daily DevOps content:",
+  tweet:`Day 30. The lessons that mattered most from 30 days of daily DevOps content:
+
+TECHNICAL:
+1. Rollbacks matter more than monitoring. Fix in 60s beats detecting in 5s.
+2. Layer caching cuts 40% of pipeline time. Fix your Dockerfile order today.
+3. GitOps is not a tool. It is a principle. Git is the control plane.
+4. The Grafana OSS stack replaces $1,000/month in SaaS monitoring. For free.
+5. Secrets in code are not technical debt. They are active security incidents.
+
+CAREER:
+6. Senior engineers think in systems, not tasks.
+7. Platform Engineering is the direction. Start building IDPs.
+8. Soft skills separate the staff engineer from the senior engineer.
+9. Build things. Real things. Not just tutorials.
+10. Share what you learn. The community will return it 10x.
+
+BUILDING IN PUBLIC:
+11. Consistency compounds. Day 30 reaches 5x more people than Day 1 with identical content.
+12. Build-in-public threads outperform everything else.
+13. Reply game beats posting alone. Add value to big accounts daily.
+14. Transparency builds more trust than polished marketing ever will.
+15. The audience you build is the product you're building.
+
+Thank you for being here from Day 1.
+Step2Dev is just getting started 🚀
+
+→ step2dev.io
+#DevOps #BuildInPublic #Step2Dev #Lessons #30Days`,
+  cta:"Follow @Yash_step2dev — the next chapter starts tomorrow. Don't miss it 🚀",
+  visual:"15 lessons in two columns — Technical and Career, clean numbered dark card",
+  medium_title:"30 Lessons From 30 Days of Daily DevOps Content: What I'd Tell Myself on Day 1",
+  medium_hook:"On Day 1 I had zero followers and a half-built product. Here is everything 30 days taught me.",
+  early_user:"Step2Dev is open for early access. Be part of what comes next → step2dev.io/early"},
+
+  {day:30,slot:"PM",type:"Thread",audience:"DevOps Engineer",
+  hook:"30 days. 60 posts. Here are EVERY real number from building Step2Dev in public:",
+  tweet:`🧵 30 DAYS. 60 POSTS. Here are EVERY real number from building Step2Dev in public:
+
+1/ I promised full transparency on Day 1. Here it is — every number, every lesson, no spin.
+
+2/ CONTENT NUMBERS:
+→ Total posts: 60 (2/day, zero days missed)
+→ Twitter/X followers: 0 → [final count]
+→ Total impressions: [total count]
+→ Medium reads: [total count]
+→ Email subscribers: [total count]
+
+3/ PRODUCT NUMBERS:
+→ step2dev.io total unique visitors: [count]
+→ Beta waitlist signups: [count]
+→ Active beta users: [count]
+→ Features shipped: 14
+→ Production incidents: 3 (all resolved under 30 min)
+
+4/ TOP 3 POSTS BY REACH:
+→ 🥇 [post title + link]
+→ 🥈 [post title + link]
+→ 🥉 [post title + link]
+
+5/ WHAT ACTUALLY DROVE GROWTH (in order):
+1. Reply game — commenting on big accounts within 30 minutes of their posts
+2. Long threads (10+ tweets) consistently beat everything else
+3. Build-in-public updates drove more beta signups than any other content type
+4. Morning posts 7-8am outperformed evening by 3x
+
+6/ WHAT I WOULD DO DIFFERENTLY:
+→ Start email list on Day 1 (not Day 14)
+→ Begin DM outreach for beta users in week 1 (not week 3)
+→ Post one product screenshot per day from the start
+
+7/ THE REAL LESSON:
+Consistent value + authentic story + daily engagement = compound growth.
+No hack. No shortcut. Just showing up every day.
+
+8/ Thank you. Every reply, retweet, and follow made this possible.
+
+Step2Dev is just getting started.
+Join what we're building → step2dev.io ❤️
+
+#BuildInPublic #DevOps #Step2Dev #30Days #Founder #SaaS`,
+  cta:"If you followed from Day 1 — RT this 🙏 You're part of this story.",
+  visual:"Final metrics dashboard — all numbers, growth chart from Day 1 to Day 30, celebration graphic",
+  medium_title:"30 Days Building Step2Dev in Public: Every Number, Every Lesson, What Comes Next",
+  medium_hook:"I started this with zero followers and one promise: share everything. Here is everything.",
+  early_user:"Join Step2Dev early access — the founding user program closes after 100 users → step2dev.io/early"},
+];
+
+const AUDIENCES_LIST = ["All","DevOps Engineer","Cloud Engineer","Developer","Founder/CEO/CTO"];
+
+export default function App() {
+  const [tab, setTab] = useState("all");
+  const [dayF, setDayF] = useState("All");
+  const [audF, setAudF] = useState("All");
+  const [slotF, setSlotF] = useState("All");
+  const [typeF, setTypeF] = useState("All");
+  const [copied, setCopied] = useState("");
+  const [expanded, setExpanded] = useState(null);
+
+  const cp = (text, key) => {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+    setTimeout(() => setCopied(""), 2000);
+  };
+
+  const Btn = ({ text, id, label = "Copy", full = false }) => (
+    <button onClick={() => cp(text, id)} style={{
+      background: copied === id ? "#065f46" : full ? "linear-gradient(90deg,#1e3a5f,#2d1b69)" : "#1e3a5f",
+      color: copied === id ? "#6ee7b7" : "#93c5fd",
+      border: copied === id ? "none" : full ? "1px solid #7c3aed" : "none",
+      borderRadius: full ? 10 : 6, padding: full ? "11px" : "3px 10px",
+      fontSize: full ? 12 : 10, fontWeight: 700, cursor: "pointer",
+      whiteSpace: "nowrap", flexShrink: 0, width: full ? "100%" : "auto",
+      marginTop: full ? 6 : 0
+    }}>{copied === id ? "✓ Copied!" : label}</button>
+  );
+
+  const days = [...new Set(posts.map(p => p.day))];
+  const filtered = posts.filter(p =>
+    (dayF === "All" || p.day === Number(dayF)) &&
+    (audF === "All" || p.audience === audF) &&
+    (slotF === "All" || p.slot === slotF) &&
+    (typeF === "All" || p.type === typeF)
+  );
+
+  const sel = (val, fn, opts, label) => (
+    <select value={val} onChange={e => fn(e.target.value)} style={{
+      background: "#111827", border: "1px solid #1e3a5f", color: "#94a3b8",
+      borderRadius: 8, padding: "6px 10px", fontSize: 11, cursor: "pointer", flex: 1, minWidth: 80
+    }}>
+      <option value="All">{label}: All</option>
+      {opts.filter(o => o !== "All").map(o => <option key={o}>{o}</option>)}
+    </select>
+  );
+
+  const tabBtn = (key, label) => (
+    <button onClick={() => setTab(key)} style={{
+      padding: "10px 14px", fontSize: 11, fontWeight: 700, cursor: "pointer",
+      color: tab === key ? "#00d4ff" : "#64748b", background: "none", border: "none",
+      borderBottom: tab === key ? "2px solid #00d4ff" : "2px solid transparent",
+      whiteSpace: "nowrap"
+    }}>{label}</button>
+  );
+
+  const slotColor = s => s === "AM" ? "#fbbf24" : "#a78bfa";
+  const typeColor = t => t === "Thread" ? "#34d399" : "#67e8f9";
+
+  return (
+    <div style={{ background: "#0a0f1e", minHeight: "100vh", fontFamily: "'Segoe UI',system-ui,sans-serif", color: "#e2e8f0" }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg,#0a0f1e,#0d1f3c)", padding: "18px 16px 12px", borderBottom: "1px solid #1e3a5f", textAlign: "center" }}>
+        <div style={{ display: "inline-block", background: "linear-gradient(90deg,#00d4ff,#7c3aed)", padding: "3px 14px", borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 8 }}>⚡ STEP2DEV</div>
+        <h1 style={{ fontSize: 18, fontWeight: 800, background: "linear-gradient(90deg,#00d4ff,#a78bfa,#f472b6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 4 }}>30-Day · 60-Post Content Engine</h1>
+        <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+          {[["60","Posts"],["30","Days"],["5","Audiences"],["4","Fields/Post"]].map(([n,l]) => (
+            <div key={l} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#00d4ff" }}>{n}</div>
+              <div style={{ fontSize: 9, color: "#64748b" }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", background: "#0d1525", borderBottom: "1px solid #1e3a5f", overflowX: "auto", padding: "0 10px" }}>
+        {tabBtn("all","📋 All Posts")}
+        {tabBtn("grid","📅 Day Grid")}
+        {tabBtn("quick","⚡ Quick Pick")}
+      </div>
+
+      {/* Filters */}
+      <div style={{ background: "#0d1525", padding: "10px 12px", borderBottom: "1px solid #1e3a5f" }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", maxWidth: 760, margin: "0 auto" }}>
+          {sel(dayF, setDayF, days.map(String), "Day")}
+          {sel(audF, setAudF, AUDIENCES_LIST, "Audience")}
+          {sel(slotF, setSlotF, ["AM","PM"], "Slot")}
+          {sel(typeF, setTypeF, ["Tip","Thread"], "Type")}
+          <div style={{ alignSelf: "center", fontSize: 10, color: "#64748b", whiteSpace: "nowrap" }}>{filtered.length} posts</div>
+        </div>
+      </div>
+
+      {/* ─── ALL POSTS VIEW ─── */}
+      {(tab === "all" || tab === "quick") && (
+        <div style={{ padding: "12px 10px", maxWidth: 760, margin: "0 auto" }}>
+          {filtered.map((p, i) => {
+            const k = `p${p.day}${p.slot}`;
+            const isOpen = expanded === k;
+            const fullText = `DAY ${p.day} · ${p.slot} · ${p.type.toUpperCase()}\nAudience: ${p.audience}\n\n🐦 TWEET:\n${p.tweet}\n\n📣 HOOK:\n${p.hook}\n\n💥 CTA:\n${p.cta}\n\n🎨 VISUAL:\n${p.visual}\n\n📝 MEDIUM TITLE:\n${p.medium_title}\n\n✍️ MEDIUM HOOK:\n${p.medium_hook}\n\n🎯 EARLY USER ANGLE:\n${p.early_user}`;
+            return (
+              <div key={k} style={{ background: "#111827", border: "1px solid #1e3a5f", borderRadius: 12, marginBottom: 8, overflow: "hidden" }}>
+                <div onClick={() => setExpanded(isOpen ? null : k)} style={{ padding: "11px 13px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", gap: 6, marginBottom: 6, flexWrap: "wrap" }}>
+                      <span style={{ background: "#1e3a5f", color: "#00d4ff", fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 20 }}>Day {p.day}</span>
+                      <span style={{ background: p.slot === "AM" ? "#2a1f00" : "#1a1035", color: slotColor(p.slot), fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 20 }}>{p.slot === "AM" ? "🌅 Morning" : "🌆 Evening"}</span>
+                      <span style={{ background: p.type === "Thread" ? "#0f2a1a" : "#0a2030", color: typeColor(p.type), fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 20 }}>{p.type === "Thread" ? "🧵 Thread" : "💡 Tip"}</span>
+                      <span style={{ background: "#1a1a2e", color: "#a78bfa", fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 20 }}>🎯 {p.audience}</span>
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#f1f5f9", lineHeight: 1.4, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{p.hook}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
+                    <Btn text={p.tweet} id={`tw${k}`} label="Tweet" />
+                    <span style={{ color: "#64748b", fontSize: 14 }}>{isOpen ? "▲" : "▼"}</span>
+                  </div>
+                </div>
+
+                {isOpen && (
+                  <div style={{ borderTop: "1px solid #1e3a5f", padding: "12px 13px" }}>
+                    {[
+                      ["🐦 Full Tweet — copy and paste directly", p.tweet, `tw2${k}`, "#00d4ff"],
+                      ["📣 Hook / Opening Line", p.hook, `hk${k}`, "#fbbf24"],
+                      ["💥 Call to Action", p.cta, `ct${k}`, "#f472b6"],
+                      ["🎨 Visual / Design Idea", p.visual, `vi${k}`, "#94a3b8"],
+                      ["📝 Medium Article Title", p.medium_title, `mt${k}`, "#34d399"],
+                      ["✍️ Medium Opening Hook", p.medium_hook, `mh${k}`, "#34d399"],
+                      ["🎯 Early User / Step2Dev Angle", p.early_user, `eu${k}`, "#fb923c"],
+                    ].map(([label, value, id, color]) => (
+                      <div key={id} style={{ marginBottom: 9 }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>{label}</div>
+                        <div style={{ background: "#0a0f1e", border: "1px solid #1e3a5f", borderRadius: 7, padding: "9px 11px", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                          <div style={{ fontSize: 11, color: "#cbd5e1", lineHeight: 1.7, flex: 1, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{value}</div>
+                          <Btn text={value} id={id} />
+                        </div>
+                      </div>
+                    ))}
+                    <Btn text={fullText} id={`all${k}`} label="📋 Copy All Fields for This Post" full />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ─── DAY GRID VIEW ─── */}
+      {tab === "grid" && (
+        <div style={{ padding: "12px 10px", maxWidth: 760, margin: "0 auto" }}>
+          {days.map(day => {
+            const dayPosts = posts.filter(p => p.day === day);
+            return (
+              <div key={day} style={{ background: "#111827", border: "1px solid #1e3a5f", borderRadius: 12, marginBottom: 10, overflow: "hidden" }}>
+                <div style={{ background: "linear-gradient(90deg,#0d1f3c,#111827)", padding: "10px 14px", borderBottom: "1px solid #1e3a5f", display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ background: "linear-gradient(90deg,#00d4ff,#7c3aed)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: 16, fontWeight: 800 }}>Day {day}</span>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+                  {dayPosts.map((p, i) => {
+                    const k = `g${p.day}${p.slot}`;
+                    const fullText = `🐦 TWEET:\n${p.tweet}\n\nHOOK: ${p.hook}\nCTA: ${p.cta}\nVISUAL: ${p.visual}\nMEDIUM: ${p.medium_title}\nEARLY USER: ${p.early_user}`;
+                    return (
+                      <div key={k} style={{ padding: "12px", borderRight: i === 0 ? "1px solid #1e3a5f" : "none", borderTop: "none" }}>
+                        <div style={{ display: "flex", gap: 5, marginBottom: 7, flexWrap: "wrap" }}>
+                          <span style={{ background: p.slot === "AM" ? "#2a1f00" : "#1a1035", color: slotColor(p.slot), fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 20 }}>{p.slot === "AM" ? "🌅 AM" : "🌆 PM"}</span>
+                          <span style={{ background: p.type === "Thread" ? "#0f2a1a" : "#0a2030", color: typeColor(p.type), fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 20 }}>{p.type}</span>
+                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "#f1f5f9", lineHeight: 1.4, marginBottom: 8 }}>{p.hook}</div>
+                        <div style={{ fontSize: 10, color: "#64748b", marginBottom: 8, lineHeight: 1.5 }}>🎯 {p.audience}</div>
+                        <div style={{ display: "flex", gap: 5 }}>
+                          <Btn text={p.tweet} id={`gtw${k}`} label="Tweet" />
+                          <Btn text={fullText} id={`gall${k}`} label="All" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
